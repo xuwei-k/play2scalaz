@@ -1,6 +1,6 @@
 import scalaz._
 import scalaz.Isomorphism._
-import play.api.libs.json.{JsResult, JsSuccess, JsError, JsObject, JsArray}
+import play.api.libs.json.{JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue}
 import play.api.libs.functional.{
   Functor => PlayFunctor,
   Applicative => PlayApplicative,
@@ -24,7 +24,7 @@ package object play2scalaz{
           val zero = ga.identity
         }
     }
-  
+
   implicit val functorIso: TypeclassIso[PlayFunctor, Functor] =
     new TypeclassIso[PlayFunctor, Functor](
       new (PlayFunctor ~~~> Functor){
@@ -96,7 +96,7 @@ package object play2scalaz{
             val empty =
               m.empty
           }
-      } 
+      }
     )
 
   implicit val jsResultInstance: Alternative[JsResult] =
@@ -144,6 +144,12 @@ package object play2scalaz{
 
   implicit val jsArrayMonoid: Monoid[JsArray] =
     monoidIso.to(play.api.libs.json.Reads.JsArrayMonoid)
+
+  implicit val jsObjectEqual: Equal[JsObject] =
+    Equal.equalA[JsObject]
+
+  implicit val jsArrayEqual: Equal[JsArray] =
+    Equal.equalA[JsArray]
 
 }
 

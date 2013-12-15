@@ -2,10 +2,7 @@ package play2scalaz.test
 
 import scalaz._
 import play.api.data.validation.ValidationError
-import play.api.libs.json.{
-  JsResult, JsSuccess, JsError, JsPath, PathNode,
-  KeyPathNode, RecursiveSearch, IdxPathNode
-}
+import play.api.libs.json._
 import org.scalacheck.{Arbitrary, Gen}
 import scalaz.scalacheck.ScalazProperties._
 import scalaz.scalacheck.ScalaCheckBinding._
@@ -14,8 +11,15 @@ import scalaz.std.anyVal._
 
 abstract class SpecBase extends org.specs2.scalaz.Spec {
 
-  protected def gen[A: Arbitrary]: Gen[A] =
+  protected final def gen[A: Arbitrary]: Gen[A] =
     implicitly[Arbitrary[A]].arbitrary
+
+  protected def arb[A: Arbitrary]: Arbitrary[A] =
+    implicitly[Arbitrary[A]]
+
+}
+
+abstract class JsResultSpecBase extends SpecBase {
 
   implicit val pathNodeArb: Arbitrary[PathNode] =
     Arbitrary(Gen.oneOf(
@@ -71,17 +75,17 @@ abstract class SpecBase extends org.specs2.scalaz.Spec {
 
 }
 
-class SuccessExample extends SpecBase{
+class SuccessExample extends JsResultSpecBase{
   import play2scalaz._
 
   def jsErrorGen = jsErrorGenDefault
-  
+
   checkAll(applicative.laws[JsResult])
   checkAll(plus.laws[JsResult])
   checkAll(equal.laws[JsResult[Int]])
 }
 
-class FailureExample1 extends SpecBase{
+class FailureExample1 extends JsResultSpecBase{
   import play2scalaz.{jsResultEqual => _, _}
 
   def jsErrorGen = jsErrorGenDefault
@@ -93,7 +97,7 @@ class FailureExample1 extends SpecBase{
   checkAll(plus.laws[JsResult])
 }
 
-class FailureExample2 extends SpecBase{
+class FailureExample2 extends JsResultSpecBase{
   import play2scalaz.{jsResultEqual => _, _}
 
   def jsErrorGen = jsErrorGenDefault
@@ -105,7 +109,7 @@ class FailureExample2 extends SpecBase{
   checkAll(plus.laws[JsResult])
 }
 
-class FailureExample3 extends SpecBase{
+class FailureExample3 extends JsResultSpecBase{
   import play2scalaz.{jsResultEqual => _, _}
 
   def jsErrorGen = jsErrorGenDefault
@@ -125,7 +129,7 @@ class FailureExample3 extends SpecBase{
   checkAll(plus.laws[JsResult])
 }
 
-class FailureExample4 extends SpecBase{
+class FailureExample4 extends JsResultSpecBase{
   import play2scalaz.{jsResultEqual => _, _}
 
   override implicit def jsResultIncorrectEqual2[A: Equal] =
@@ -136,3 +140,58 @@ class FailureExample4 extends SpecBase{
   checkAll(applicative.laws[JsResult])
   checkAll(plus.laws[JsResult])
 }
+
+class JsValueSpec extends SpecBase{
+  import play2scalaz._
+
+  private[this] val jsValuePrimitivesArb: Arbitrary[JsValue] =
+      Arbitrary(Gen.oneOf(
+        JsNull,
+        gen[String].map(JsUndefined.apply(_)),
+        gen[Boolean].map(JsBoolean),
+        gen[BigDecimal].map(JsNumber),
+        gen[String].map(JsString)
+      ))
+
+  private[this] val jsObjectArb1: Arbitrary[JsObject] =
+    Arbitrary(Gen.choose(0, 4).flatMap(n =>
+      Gen.listOfN(
+        n,
+        Arbitrary.arbTuple2(
+          arb[String], jsValuePrimitivesArb
+        ).arbitrary
+      ).map(JsObject)
+    ))
+
+  private[this] val jsArrayArb1: Arbitrary[JsArray] =
+    Arbitrary(Gen.choose(0, 4).flatMap(n =>
+      Gen.listOfN(n, jsValuePrimitivesArb.arbitrary).map(JsArray)
+    ))
+
+  implicit val jsValueArb: Arbitrary[JsValue] =
+    Arbitrary(Gen.oneOf(
+      jsValuePrimitivesArb.arbitrary,
+      jsObjectArb1.arbitrary,
+      jsArrayArb1.arbitrary
+    ))
+
+  implicit val jsObjectArb: Arbitrary[JsObject] =
+    Arbitrary(Gen.choose(0, 4).flatMap(n =>
+      Gen.listOfN(
+        n,
+        Arbitrary.arbTuple2(arb[String], jsValueArb).arbitrary
+      ).map(JsObject)
+    ))
+
+  implicit val jsArrayArb: Arbitrary[JsArray] =
+    Arbitrary(Gen.choose(0, 4).flatMap(n =>
+      Gen.listOfN(n, jsValueArb.arbitrary).map(JsArray)
+    ))
+
+  checkAll("JsObject", monoid.laws[JsObject])
+  checkAll("JsArray",  monoid.laws[JsArray])
+
+  checkAll("JsObject", equal.laws[JsObject])
+  checkAll("JsArray",  equal.laws[JsArray])
+}
+
