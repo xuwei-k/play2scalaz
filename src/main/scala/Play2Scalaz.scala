@@ -1,12 +1,29 @@
 import scalaz._
-import play.api.libs.json.{JsResult, JsSuccess, JsError}
+import scalaz.Isomorphism._
+import play.api.libs.json.{JsResult, JsSuccess, JsError, JsObject, JsArray}
 import play.api.libs.functional.{
   Functor => PlayFunctor,
   Applicative => PlayApplicative,
-  Alternative => PlayAlternative
+  Alternative => PlayAlternative,
+  Monoid => PlayMonoid
 }
 
 package object play2scalaz{
+  implicit val monoidIso: PlayMonoid <~> Monoid =
+    new IsoFunctorTemplate[PlayMonoid, Monoid]{
+      def from[A](ga: Monoid[A]) =
+        new PlayMonoid[A]{
+          def append(a1: A, a2: A) =
+            ga.append(a1, a2)
+          val identity = ga.zero
+        }
+      def to[A](ga: PlayMonoid[A]) =
+        new Monoid[A]{
+          def append(a1: A, a2: => A) =
+            ga.append(a1, a2)
+          val zero = ga.identity
+        }
+    }
   
   implicit val functorIso: TypeclassIso[PlayFunctor, Functor] =
     new TypeclassIso[PlayFunctor, Functor](
@@ -121,6 +138,12 @@ package object play2scalaz{
         a.errors.toSet == b.errors.toSet
       case (_, _) => false
     }
+
+  implicit val jsObjectMonoid: Monoid[JsObject] =
+    monoidIso.to(play.api.libs.json.Reads.JsObjectMonoid)
+
+  implicit val jsArrayMonoid: Monoid[JsArray] =
+    monoidIso.to(play.api.libs.json.Reads.JsArrayMonoid)
 
 }
 
