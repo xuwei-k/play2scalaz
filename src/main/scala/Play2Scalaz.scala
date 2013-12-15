@@ -114,7 +114,7 @@ package object play2scalaz{
   implicit def jsResultEqual[A](implicit A: Equal[A]): Equal[JsResult[A]] =
     Equal.equal{
       case (a: JsSuccess[_], b: JsSuccess[_]) =>
-        // does not satify laws if compare path
+        // does not satisfy the laws if compare path
         A.equal(a.get, b.get) // && a.path == b.path
       case (a: JsError, b: JsError) =>
         // need `toSet` !!!
