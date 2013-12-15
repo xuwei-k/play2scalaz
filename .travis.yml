@@ -7,3 +7,6 @@ jdk:
   - oraclejdk7
   - openjdk7
   - oraclejdk8
+
+script:
+  sbt 'testOnly Failure*' ; sbt 'testOnly Success*'
