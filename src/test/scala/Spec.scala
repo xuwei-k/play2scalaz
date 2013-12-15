@@ -78,6 +78,7 @@ class SuccessExample extends SpecBase{
   
   checkAll(applicative.laws[JsResult])
   checkAll(plus.laws[JsResult])
+  checkAll(equal.laws[JsResult[Int]])
 }
 
 class FailureExample1 extends SpecBase{
