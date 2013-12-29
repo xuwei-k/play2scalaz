@@ -9,45 +9,9 @@ import scalaz.scalacheck.ScalaCheckBinding._
 import scalaz.scalacheck.ScalaCheckBinding.GenMonad.applySyntax._
 import scalaz.std.anyVal._
 
-abstract class SpecBase extends scalaz.SpecLite {
-
-  protected final def gen[A: Arbitrary]: Gen[A] =
-    implicitly[Arbitrary[A]].arbitrary
-
-  protected def arb[A: Arbitrary]: Arbitrary[A] =
-    implicitly[Arbitrary[A]]
-
-}
-
-abstract class JsResultSpecBase extends SpecBase {
-
-  implicit val pathNodeArb: Arbitrary[PathNode] =
-    Arbitrary(Gen.oneOf(
-      Gen.alphaStr.map(KeyPathNode),
-      Gen.alphaStr.map(RecursiveSearch),
-      gen[Int].map(IdxPathNode)
-    ))
-
-  implicit val jsPathArb: Arbitrary[JsPath] =
-    Arbitrary(gen[List[PathNode]].map(JsPath.apply))
-
-  implicit val validationErrorArb: Arbitrary[ValidationError] =
-    Arbitrary(
-      ^(Gen.alphaStr, gen[List[Int]])(ValidationError.apply)
-    )
+abstract class JsResultSpecBase extends scalaz.SpecLite with Play2Arbitrary{
 
   protected def jsErrorGen: Gen[JsError]
-
-  // incorrect too...
-  protected final def jsErrorGenMerged: Gen[JsError] =
-    gen[List[(JsPath, List[ValidationError])]].map{ e =>
-      JsError() ++ new JsError(e) // https://github.com/playframework/playframework/blob/2.2.2-RC1/framework/src/play-json/src/main/scala/play/api/libs/json/JsResult.scala#L13
-    }
-
-  protected final def jsErrorGenDefault: Gen[JsError] =
-    gen[List[(JsPath, List[ValidationError])]].map{ e =>
-      new JsError(e)
-    }
 
   implicit def jsResultArb1[A: Arbitrary]: Arbitrary[JsResult[A]] =
     Arbitrary(Gen.oneOf(
@@ -141,19 +105,20 @@ object FailureExample4 extends JsResultSpecBase{
   checkAll(plus.laws[JsResult])
 }
 
-object JsValueSpec extends SpecBase{
+object JsValueSpec extends scalaz.SpecLite{
   import play2scalaz._
+  import Play2Arbitrary.{gen, arb}
 
-  private[this] val jsValuePrimitivesArb: Arbitrary[JsValue] =
-      Arbitrary(Gen.oneOf(
-        Gen.const(JsNull),
-        gen[String].map(JsUndefined.apply(_)),
-        gen[Boolean].map(JsBoolean),
-        gen[BigDecimal].map(JsNumber),
-        gen[String].map(JsString)
-      ))
+  def jsValuePrimitivesArb: Arbitrary[JsValue] =
+    Arbitrary(Gen.oneOf(
+      Gen.const(JsNull),
+      gen[String].map(JsUndefined.apply(_)),
+      gen[Boolean].map(JsBoolean),
+      gen[BigDecimal].map(JsNumber),
+      gen[String].map(JsString)
+    ))
 
-  private[this] val jsObjectArb1: Arbitrary[JsObject] =
+  def jsObjectArb1: Arbitrary[JsObject] =
     Arbitrary(Gen.choose(0, 4).flatMap(n =>
       Gen.listOfN(
         n,
@@ -163,19 +128,19 @@ object JsValueSpec extends SpecBase{
       ).map(JsObject)
     ))
 
-  private[this] val jsArrayArb1: Arbitrary[JsArray] =
+  private def jsArrayArb1: Arbitrary[JsArray] =
     Arbitrary(Gen.choose(0, 4).flatMap(n =>
       Gen.listOfN(n, jsValuePrimitivesArb.arbitrary).map(JsArray)
     ))
 
-  implicit val jsValueArb: Arbitrary[JsValue] =
+  implicit def jsValueArb: Arbitrary[JsValue] =
     Arbitrary(Gen.oneOf(
       jsValuePrimitivesArb.arbitrary,
       jsObjectArb1.arbitrary,
       jsArrayArb1.arbitrary
     ))
 
-  implicit val jsObjectArb: Arbitrary[JsObject] =
+  implicit def jsObjectArb: Arbitrary[JsObject] =
     Arbitrary(Gen.choose(0, 4).flatMap(n =>
       Gen.listOfN(
         n,
@@ -183,7 +148,7 @@ object JsValueSpec extends SpecBase{
       ).map(JsObject)
     ))
 
-  implicit val jsArrayArb: Arbitrary[JsArray] =
+  implicit def jsArrayArb: Arbitrary[JsArray] =
     Arbitrary(Gen.choose(0, 4).flatMap(n =>
       Gen.listOfN(n, jsValueArb.arbitrary).map(JsArray)
     ))
