@@ -109,12 +109,15 @@ object JsValueSpec extends scalaz.SpecLite{
   import play2scalaz._
   import Play2Arbitrary.{gen, arb}
 
+  // `org.scalacheck.Arbitrary.arbBigDecimal` is not useful. because too big or too small
+  val bigDecimalGen: Gen[BigDecimal] = Gen.choose(Long.MinValue, Long.MaxValue).map(BigDecimal(_))
+
   def jsValuePrimitivesArb: Arbitrary[JsValue] =
     Arbitrary(Gen.oneOf(
       Gen.const(JsNull),
       gen[String].map(JsUndefined.apply(_)),
       gen[Boolean].map(JsBoolean),
-      gen[BigDecimal].map(JsNumber),
+      bigDecimalGen.map(JsNumber),
       gen[String].map(JsString)
     ))
 
