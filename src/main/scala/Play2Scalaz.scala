@@ -1,6 +1,8 @@
 import scalaz._
 import scalaz.Isomorphism._
-import play.api.libs.json.{JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue, OFormat, OWrites}
+import play.api.libs.json.{
+  JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue, OFormat, OWrites, Reads
+}
 import play.api.libs.functional.{
   InvariantFunctor => PlayInvariantFunctor,
   Functor => PlayFunctor,
@@ -194,5 +196,8 @@ package object play2scalaz{
 
   implicit val oWritesContravariant: Contravariant[OWrites] =
     contravariantIso.to(play.api.libs.json.OWrites.contravariantfunctorOWrites)
+
+  implicit val readsFunctor: Functor[Reads] =
+    functorIso.to(play.api.libs.json.Reads.functorReads)
 }
 
