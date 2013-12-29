@@ -25,11 +25,21 @@ libraryDependencies ++= Seq(
 )
 
 val specLiteURL = "https://raw.github.com/scalaz/scalaz/v7.1.0-M4/tests/src/test/scala/scalaz/SpecLite.scala"
+val specLite = SettingKey[List[String]]("specLite")
 
-def downloadSpecLite(dir: File): File = {
+specLite := {
+  sLog.value.info(s"downloading from ${specLiteURL}")
+  val lines = IO.readLinesURL(url(specLiteURL))
+  sLog.value.info("download finished")
+  lines
+}
+
+def specLiteFile(dir: File, contents: List[String]): File = {
   val file = dir / "SpecLite.scala"
-  IO.download(url(specLiteURL), file)
+  IO.writeLines(file, contents)
   file
 }
 
-sourceGenerators in Test += task(Seq(downloadSpecLite((sourceManaged in Test).value)))
+sourceGenerators in Test += task{
+  Seq(specLiteFile((sourceManaged in Test).value, specLite.value))
+}
