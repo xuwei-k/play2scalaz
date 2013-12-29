@@ -1,9 +1,10 @@
 import scalaz._
 import scalaz.Isomorphism._
-import play.api.libs.json.{JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue, OFormat}
+import play.api.libs.json.{JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue, OFormat, OWrites}
 import play.api.libs.functional.{
   InvariantFunctor => PlayInvariantFunctor,
   Functor => PlayFunctor,
+  ContravariantFunctor => PlayContravariant,
   Applicative => PlayApplicative,
   Alternative => PlayAlternative,
   Monoid => PlayMonoid
@@ -40,6 +41,24 @@ package object play2scalaz{
           new PlayInvariantFunctor[M] {
             def inmap[A, B](ma: M[A], f: A => B, g: B => A) =
               m.xmap(ma, f, g)
+          }
+      }
+    )
+
+  implicit val contravariantIso: TypeclassIso[PlayContravariant, Contravariant] =
+    new TypeclassIso[PlayContravariant, Contravariant](
+      new (PlayContravariant ~~~> Contravariant){
+        def apply[M[_]](m: PlayContravariant[M]) =
+          new Contravariant[M] {
+            def contramap[A, B](ma: M[A])(f: B => A) =
+              m.contramap(ma, f)
+          }
+      },
+      new (Contravariant ~~~> PlayContravariant){
+        def apply[M[_]](m: Contravariant[M]) =
+          new PlayContravariant[M] {
+            def contramap[A, B](ma: M[A], f: B => A) =
+              m.contramap(ma)(f)
           }
       }
     )
@@ -172,5 +191,8 @@ package object play2scalaz{
 
   implicit val oFormatInvariant: InvariantFunctor[OFormat] =
     invariantFunctorIso.to(play.api.libs.json.OFormat.invariantFunctorOFormat)
+
+  implicit val oWritesContravariant: Contravariant[OWrites] =
+    contravariantIso.to(play.api.libs.json.OWrites.contravariantfunctorOWrites)
 }
 
