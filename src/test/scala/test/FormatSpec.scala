@@ -18,7 +18,7 @@ sealed trait LowPriorityReadsImplicits extends Play2Arbitrary{
     }
 
   implicit def readsArb[A: Arbitrary]: Arbitrary[Reads[A]] = {
-    import SuccessExample.jsResultArb1
+    import JsResultSpec.jsResultArb1
     import scalaz.scalacheck.ScalazArbitrary.KleisliArbitrary
     Functor[Arbitrary].map(
       arb[Kleisli[JsResult, JsValue, A]]

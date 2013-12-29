@@ -9,4 +9,4 @@ jdk:
   - oraclejdk8
 
 script:
-  sbt 'testOnly play2scalaz.test.Failure*' ; sbt 'testOnly play2scalaz.test.Success* play2scalaz.test.JsValueSpec'
+  sbt 'testOnly play2scalaz.failure_test.*' ; sbt 'testOnly play2scalaz.test.*'
