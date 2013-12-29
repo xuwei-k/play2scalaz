@@ -12,6 +12,10 @@ initialCommands in console := "import play2scalaz._"
 
 scalacOptions ++= Seq("-language:_", "-deprecation", "-unchecked", "-Xlint")
 
+parallelExecution in Test := false
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-workers", "1")
+
 val scalazV = "7.1.0-M4"
 
 libraryDependencies ++= Seq(
