@@ -5,7 +5,7 @@ import scalaz._, std.anyVal._, Isomorphism._
 import org.scalacheck.{Arbitrary, Gen}
 import scalaz.scalacheck.ScalaCheckBinding._
 import scalaz.scalacheck.ScalazProperties._
-import play.api.libs.json.{JsResult, Reads, JsValue}
+import play.api.libs.json.{JsResult, Reads, JsValue, OWrites, JsObject, OFormat}
 
 sealed trait LowPriorityReadsImplicits extends Play2Arbitrary{
 
@@ -44,5 +44,40 @@ object ReadsSpec extends scalaz.SpecLite with LowPriorityReadsImplicits{
   checkAll(applicative.laws[Reads])
   checkAll(plus.laws[Reads])
 
+}
+
+object OWritesSpec extends scalaz.SpecLite with Play2Arbitrary{
+
+  implicit def owritesArb[A: Arbitrary]: Arbitrary[OWrites[A]] = {
+    import JsValueSpec.jsObjectArb
+    Functor[Arbitrary].map(implicitly[Arbitrary[A => JsObject]])(OWrites.apply[A])
+  }
+
+  implicit def owritesEqual[A: Equal: Arbitrary]: Equal[OWrites[A]] =
+    Equal.equal{(a, b) =>
+      val jsons = Iterator.continually(implicitly[Arbitrary[A]].arbitrary.sample).flatten.take(30).toList
+      jsons.forall(j => Equal[JsObject].equal(a.writes(j), b.writes(j)))
+    }
+
+  checkAll(contravariant.laws[OWrites])
+
+}
+
+object OFormatSpec extends scalaz.SpecLite{
+  import OWritesSpec._
+  import ReadsSpec._
+
+  implicit def oFormatArb[A: Arbitrary]: Arbitrary[OFormat[A]] =
+    Apply[Arbitrary].apply2(
+      implicitly[Arbitrary[Reads[A]]],
+      implicitly[Arbitrary[OWrites[A]]]
+    )(OFormat.apply[A])
+
+  implicit def oFormatIntEqual: Equal[OFormat[Int]] =
+    Equal.equal{(a, b) =>
+      Equal[OWrites[Int]].equal(a, b) && Equal[Reads[Int]].equal(a, b)
+    }
+
+  checkAll(invariantFunctor.laws[OFormat])
 }
 
