@@ -197,7 +197,7 @@ package object play2scalaz{
   implicit val oWritesContravariant: Contravariant[OWrites] =
     contravariantIso.to(play.api.libs.json.OWrites.contravariantfunctorOWrites)
 
-  implicit val readsFunctor: Functor[Reads] =
-    functorIso.to(play.api.libs.json.Reads.functorReads)
+  implicit val readsAlternative: Alternative[Reads] =
+    alternativeIso.to(play.api.libs.json.Reads.alternative)
 }
 
