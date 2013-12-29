@@ -12,12 +12,20 @@ initialCommands in console := "import play2scalaz._"
 
 scalacOptions ++= Seq("-language:_", "-deprecation", "-unchecked", "-Xlint")
 
-val scalazV = "7.0.5"
+val scalazV = "7.1.0-M4"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json" % "2.2.2-RC1",
   "org.scalaz" %% "scalaz-core" % scalazV,
-  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazV % "test",
-  "org.typelevel" %% "scalaz-specs2" % "0.1.5" % "test"
+  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazV % "test"
 )
 
+val specLiteURL = "https://raw.github.com/scalaz/scalaz/v7.1.0-M4/tests/src/test/scala/scalaz/SpecLite.scala"
+
+def downloadSpecLite(dir: File): File = {
+  val file = dir / "SpecLite.scala"
+  IO.download(url(specLiteURL), file)
+  file
+}
+
+sourceGenerators in Test += task(Seq(downloadSpecLite((sourceManaged in Test).value)))

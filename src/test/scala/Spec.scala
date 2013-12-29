@@ -9,7 +9,7 @@ import scalaz.scalacheck.ScalaCheckBinding._
 import scalaz.scalacheck.ScalaCheckBinding.GenMonad.applySyntax._
 import scalaz.std.anyVal._
 
-abstract class SpecBase extends org.specs2.scalaz.Spec {
+abstract class SpecBase extends scalaz.SpecLite {
 
   protected final def gen[A: Arbitrary]: Gen[A] =
     implicitly[Arbitrary[A]].arbitrary
@@ -75,7 +75,7 @@ abstract class JsResultSpecBase extends SpecBase {
 
 }
 
-class SuccessExample extends JsResultSpecBase{
+object SuccessExample extends JsResultSpecBase{
   import play2scalaz._
 
   def jsErrorGen = jsErrorGenDefault
@@ -85,7 +85,7 @@ class SuccessExample extends JsResultSpecBase{
   checkAll(equal.laws[JsResult[Int]])
 }
 
-class FailureExample1 extends JsResultSpecBase{
+object FailureExample1 extends JsResultSpecBase{
   import play2scalaz.{jsResultEqual => _, _}
 
   def jsErrorGen = jsErrorGenDefault
@@ -97,7 +97,7 @@ class FailureExample1 extends JsResultSpecBase{
   checkAll(plus.laws[JsResult])
 }
 
-class FailureExample2 extends JsResultSpecBase{
+object FailureExample2 extends JsResultSpecBase{
   import play2scalaz.{jsResultEqual => _, _}
 
   def jsErrorGen = jsErrorGenDefault
@@ -109,7 +109,7 @@ class FailureExample2 extends JsResultSpecBase{
   checkAll(plus.laws[JsResult])
 }
 
-class FailureExample3 extends JsResultSpecBase{
+object FailureExample3 extends JsResultSpecBase{
   import play2scalaz.{jsResultEqual => _, _}
 
   def jsErrorGen = jsErrorGenDefault
@@ -129,7 +129,7 @@ class FailureExample3 extends JsResultSpecBase{
   checkAll(plus.laws[JsResult])
 }
 
-class FailureExample4 extends JsResultSpecBase{
+object FailureExample4 extends JsResultSpecBase{
   import play2scalaz.{jsResultEqual => _, _}
 
   override implicit def jsResultIncorrectEqual2[A: Equal] =
@@ -141,12 +141,12 @@ class FailureExample4 extends JsResultSpecBase{
   checkAll(plus.laws[JsResult])
 }
 
-class JsValueSpec extends SpecBase{
+object JsValueSpec extends SpecBase{
   import play2scalaz._
 
   private[this] val jsValuePrimitivesArb: Arbitrary[JsValue] =
       Arbitrary(Gen.oneOf(
-        JsNull,
+        Gen.const(JsNull),
         gen[String].map(JsUndefined.apply(_)),
         gen[Boolean].map(JsBoolean),
         gen[BigDecimal].map(JsNumber),
