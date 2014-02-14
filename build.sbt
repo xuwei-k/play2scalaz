@@ -1,6 +1,6 @@
 name := "play2scalaz"
 
-scalaVersion := "2.10.4-RC1"
+scalaVersion := "2.10.4-RC3"
 
 organization := "com.github.xuwei-k"
 
@@ -16,15 +16,15 @@ parallelExecution in Test := false
 
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-workers", "1")
 
-val scalazV = "7.1.0-M4"
+val scalazV = "7.1.0-M5"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-json" % "2.2.2-RC1",
+  "com.typesafe.play" %% "play-json" % "2.2.2-RC3",
   "org.scalaz" %% "scalaz-core" % scalazV,
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazV % "test"
 )
 
-val specLiteURL = "https://raw.github.com/scalaz/scalaz/v7.1.0-M4/tests/src/test/scala/scalaz/SpecLite.scala"
+val specLiteURL = s"https://raw.github.com/scalaz/scalaz/v${scalazV}/tests/src/test/scala/scalaz/SpecLite.scala"
 val specLite = SettingKey[List[String]]("specLite")
 
 specLite := {
