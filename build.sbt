@@ -46,9 +46,9 @@ val specLiteURL = s"https://raw.github.com/scalaz/scalaz/v${scalazV}/tests/src/t
 val specLite = SettingKey[List[String]]("specLite")
 
 specLite := {
-  sLog.value.info(s"downloading from ${specLiteURL}")
+  println(s"downloading from ${specLiteURL}")
   val lines = IO.readLinesURL(url(specLiteURL))
-  sLog.value.info("download finished")
+  println("download finished")
   lines
 }
 
