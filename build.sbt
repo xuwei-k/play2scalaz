@@ -26,6 +26,18 @@ pomExtra := (
 </developers>
 )
 
+def gitHash: Option[String] = scala.util.Try(
+  sys.process.Process("git show -s --oneline").lines_!.head.split(" ").head
+).toOption
+
+scalacOptions in (Compile, doc) ++= {
+  val tag = if(isSnapshot.value) gitHash.getOrElse("master") else { "v" + version.value }
+  Seq(
+    "-sourcepath", baseDirectory.value.getAbsolutePath,
+    "-doc-source-url", s"https://github.com/xuwei-k/play2scalaz/tree/${tag}€{FILE_PATH}.scala"
+  )
+}
+
 initialCommands in console := "import play2scalaz._"
 
 scalacOptions ++= Seq("-language:_", "-deprecation", "-unchecked", "-Xlint")
