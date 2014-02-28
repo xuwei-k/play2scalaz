@@ -8,6 +8,22 @@ resolvers += "typesafe" at "http://typesafe.artifactoryonline.com/typesafe/relea
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
+scmInfo := Some(ScmInfo(
+  url("https://github.com/xuwei-k/play2scalaz"),
+  "scm:git:git@github.com:xuwei-k/play2scalaz.git"
+))
+
+pomExtra := (
+<url>https://github.com/xuwei-k/play2scalaz</url>
+<developers>
+  <developer>
+    <id>xuwei-k</id>
+    <name>Kenji Yoshida</name>
+    <url>https://github.com/xuwei-k</url>
+  </developer>
+</developers>
+)
+
 initialCommands in console := "import play2scalaz._"
 
 scalacOptions ++= Seq("-language:_", "-deprecation", "-unchecked", "-Xlint")
@@ -19,7 +35,7 @@ testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-workers", "1"
 val scalazV = "7.1.0-M5"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-json" % "2.2.2-RC3",
+  "com.typesafe.play" %% "play-json" % "2.2.2",
   "org.scalaz" %% "scalaz-core" % scalazV,
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazV % "test"
 )
