@@ -4,6 +4,8 @@ scalaVersion := "2.10.4-RC3"
 
 organization := "com.github.xuwei-k"
 
+description := "play framework2 and scalaz typeclasses converter"
+
 resolvers += "typesafe" at "http://typesafe.artifactoryonline.com/typesafe/releases"
 
 licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
