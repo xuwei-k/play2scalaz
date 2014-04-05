@@ -3,7 +3,7 @@ package play2scalaz
 import scalaz._
 import scalaz.Isomorphism._
 import play.api.libs.json.{
-  JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue, OFormat, OWrites, Reads
+  JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue, OFormat, Writes, OWrites, Reads
 }
 import play.api.libs.functional.{
   Functor => PlayFunctor,
@@ -170,6 +170,30 @@ object Play2Scalaz extends Play2ScalazBase {
         // need `toSet` !!!
         a.errors.toSet == b.errors.toSet
       case (_, _) => false
+    }
+
+  val readsKleisliIso: Reads <~> ({type λ[α] = Kleisli[JsResult, JsValue, α]})#λ =
+    new IsoFunctorTemplate[Reads, ({type λ[α] = Kleisli[JsResult, JsValue, α]})#λ]{
+      def from[A](ga: Kleisli[JsResult, JsValue, A]) =
+        Reads(ga.run)
+      def to[A](fa: Reads[A]) =
+        Kleisli(fa.reads)
+    }
+
+  val writesFunction1Iso: Writes <~> ({type λ[α] = α => JsValue})#λ =
+    new IsoFunctorTemplate[Writes, ({type λ[α] = α => JsValue})#λ]{
+      def from[A](ga: A => JsValue) =
+        Writes(ga)
+      def to[A](fa: Writes[A]) =
+        fa.writes _
+    }
+
+  val owritesFunction1Iso: OWrites <~> ({type λ[α] = α => JsObject})#λ =
+    new IsoFunctorTemplate[OWrites, ({type λ[α] = α => JsObject})#λ]{
+      def from[A](ga: A => JsObject) =
+        OWrites(ga)
+      def to[A](fa: OWrites[A]) =
+        fa.writes _
     }
 
   implicit val jsObjectMonoid: Monoid[JsObject] =
