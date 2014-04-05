@@ -1,13 +1,13 @@
 package play2scalaz
-package test
 
 import scalaz._, std.anyVal._, Isomorphism._
 import org.scalacheck.{Arbitrary, Gen}
 import scalaz.scalacheck.ScalaCheckBinding._
 import scalaz.scalacheck.ScalazProperties._
 import play.api.libs.json.{JsResult, Reads, JsValue, OWrites, JsObject, OFormat}
+import Play2Scalaz._
 
-sealed trait LowPriorityReadsImplicits extends Play2Arbitrary{
+sealed trait LowPriorityReadsImplicits extends play2scalacheck.Play2Arbitrary {
 
   val readsKleisliIso: Reads <~> ({type λ[α] = Kleisli[JsResult, JsValue, α]})#λ =
     new IsoFunctorTemplate[Reads, ({type λ[α] = Kleisli[JsResult, JsValue, α]})#λ]{
@@ -18,7 +18,6 @@ sealed trait LowPriorityReadsImplicits extends Play2Arbitrary{
     }
 
   implicit def readsArb[A: Arbitrary]: Arbitrary[Reads[A]] = {
-    import JsResultSpec.jsResultArb1
     import scalaz.scalacheck.ScalazArbitrary.KleisliArbitrary
     Functor[Arbitrary].map(
       arb[Kleisli[JsResult, JsValue, A]]
@@ -37,7 +36,7 @@ object ReadsSpec extends scalaz.SpecLite with LowPriorityReadsImplicits{
 
   implicit val intReadsEqual: Equal[Reads[Int]] =
     Equal.equal{(a, b) =>
-      val jsons = Iterator.continually(JsValueSpec.jsValuePrimitivesArb.arbitrary.sample).flatten.take(30).toList
+      val jsons = Iterator.continually(play2scalacheck.Play2Arbitrary.jsValuePrimitivesArb.arbitrary.sample).flatten.take(30).toList
       jsons.forall(j => Equal[JsResult[Int]].equal(a.reads(j), b.reads(j)))
     }
 
@@ -46,10 +45,9 @@ object ReadsSpec extends scalaz.SpecLite with LowPriorityReadsImplicits{
 
 }
 
-object OWritesSpec extends scalaz.SpecLite with Play2Arbitrary{
+object OWritesSpec extends scalaz.SpecLite with play2scalacheck.Play2Arbitrary{
 
   implicit def owritesArb[A: Arbitrary]: Arbitrary[OWrites[A]] = {
-    import JsValueSpec.jsObjectArb
     Functor[Arbitrary].map(implicitly[Arbitrary[A => JsObject]])(OWrites.apply[A])
   }
 

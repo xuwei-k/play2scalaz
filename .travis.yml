@@ -1,7 +1,7 @@
 language: scala
 
 scala:
-  - 2.10.4-RC3
+  - 2.10.4
 
 jdk:
   - oraclejdk7
@@ -9,4 +9,5 @@ jdk:
   - oraclejdk8
 
 script:
-  sbt 'testOnly play2scalaz.failure_test.*' ; sbt 'testOnly play2scalaz.test.*'
+  - sbt checkGenerate test
+

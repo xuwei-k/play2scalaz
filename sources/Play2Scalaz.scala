@@ -1,10 +1,11 @@
+package play2scalaz
+
 import scalaz._
 import scalaz.Isomorphism._
 import play.api.libs.json.{
   JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue, OFormat, OWrites, Reads
 }
 import play.api.libs.functional.{
-  InvariantFunctor => PlayInvariantFunctor,
   Functor => PlayFunctor,
   ContravariantFunctor => PlayContravariant,
   Applicative => PlayApplicative,
@@ -12,7 +13,17 @@ import play.api.libs.functional.{
   Monoid => PlayMonoid
 }
 
-package object play2scalaz{
+final case class TypeclassIso[F[_[_]], G[_[_]]](
+  to: F ~~~> G, from: G ~~~> F
+)
+
+/** higher order function */
+abstract class ~~~>[F[_[_]], G[_[_]]] {
+  def apply[M[_]](fm: F[M]): G[M]
+}
+
+object Play2Scalaz extends Play2ScalazBase {
+
   implicit val monoidIso: PlayMonoid <~> Monoid =
     new IsoFunctorTemplate[PlayMonoid, Monoid]{
       def from[A](ga: Monoid[A]) =
@@ -28,24 +39,6 @@ package object play2scalaz{
           val zero = ga.identity
         }
     }
-
-  implicit val invariantFunctorIso: TypeclassIso[PlayInvariantFunctor, InvariantFunctor] =
-    new TypeclassIso[PlayInvariantFunctor, InvariantFunctor](
-      new (PlayInvariantFunctor ~~~> InvariantFunctor){
-        def apply[M[_]](m: PlayInvariantFunctor[M]) =
-          new InvariantFunctor[M] {
-            def xmap[A, B](ma: M[A], f: A => B, g: B => A) =
-              m.inmap(ma, f, g)
-          }
-      },
-      new (InvariantFunctor ~~~> PlayInvariantFunctor){
-        def apply[M[_]](m: InvariantFunctor[M]) =
-          new PlayInvariantFunctor[M] {
-            def inmap[A, B](ma: M[A], f: A => B, g: B => A) =
-              m.xmap(ma, f, g)
-          }
-      }
-    )
 
   implicit val contravariantIso: TypeclassIso[PlayContravariant, Contravariant] =
     new TypeclassIso[PlayContravariant, Contravariant](
@@ -190,9 +183,6 @@ package object play2scalaz{
 
   implicit val jsArrayEqual: Equal[JsArray] =
     Equal.equalA[JsArray]
-
-  implicit val oFormatInvariant: InvariantFunctor[OFormat] =
-    invariantFunctorIso.to(play.api.libs.json.OFormat.invariantFunctorOFormat)
 
   implicit val oWritesContravariant: Contravariant[OWrites] =
     contravariantIso.to(play.api.libs.json.OWrites.contravariantfunctorOWrites)
