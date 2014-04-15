@@ -7,10 +7,18 @@ import com.typesafe.sbt.pgp.PgpKeys
 object build extends Build {
 
   val play2scalazFile = "Play2Scalaz.scala"
+  val play2scalaz70File = "Play2Scalaz70Base.scala"
+  val play2scalaz71File = "Play2Scalaz71Base.scala"
   val play2scalacheckFile = "Play2Scalacheck.scala"
   val rootProjectId = "root"
-  val scalaz70v = "7.0.6"
+  val play22 = "2.2.2"
+  val play23 = "2.3-M1"
   val scalaz71v = "7.1.0-M6"
+  val scalaz70 = "org.scalaz" %% "scalaz-core" % "7.0.6"
+  val scalaz71 = "org.scalaz" %% "scalaz-core" % scalaz71v
+  val scalacheck110 = "org.scalacheck" %% "scalacheck" % "1.10.1"
+  val scalacheck111 = "org.scalacheck" %% "scalacheck" % "1.11.3"
+  val play23v = "2.3-M1"
   val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
   val scalazDescription = "play framework2 and scalaz typeclasses converter"
   val scalacheckDescription = "play framework2 scalacheck binding"
@@ -95,7 +103,6 @@ object build extends Build {
     },
     logBuffered in Test := false,
     scalacOptions ++= Seq("-language:_", "-deprecation", "-unchecked", "-Xlint"),
-    libraryDependencies += "com.typesafe.play" %% "play-json" % "2.2.2",
     ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
@@ -123,18 +130,22 @@ object build extends Build {
     }.toList
   )
 
-  def baseSettings(srcFile: String) = commonSettings ++ Seq(
-    copySources := {
-      IO.copyFile(
-        (baseDirectory in LocalRootProject).value / "sources" / srcFile,
-        (scalaSource in Compile).value / generatedSourceDir / srcFile
-      )
-    },
-    compile in Compile <<= (compile in Compile) dependsOn copySources,
-    packageSrc in Compile <<= (packageSrc in Compile).dependsOn(compile in Compile),
-    cleanSrc := IO.delete((scalaSource in Compile).value / generatedSourceDir),
-    clean <<= clean dependsOn cleanSrc
-  )
+  def module(projectName: String, srcFiles: List[String], playVersion: String) =
+    Project(projectName, file(projectName)).settings(commonSettings: _*).settings(
+      libraryDependencies += "com.typesafe.play" %% "play-json" % playVersion,
+      copySources := {
+        srcFiles.foreach{ srcFile =>
+          IO.copyFile(
+            (baseDirectory in LocalRootProject).value / "sources" / srcFile,
+            (scalaSource in Compile).value / generatedSourceDir / srcFile
+          )
+        }
+      },
+      compile in Compile <<= (compile in Compile) dependsOn copySources,
+      packageSrc in Compile <<= (packageSrc in Compile).dependsOn(compile in Compile),
+      cleanSrc := IO.delete((scalaSource in Compile).value / generatedSourceDir),
+      clean <<= clean dependsOn cleanSrc
+    )
 
   lazy val root = Project(rootProjectId, file(".")).settings(
     commonSettings: _*
@@ -142,45 +153,44 @@ object build extends Build {
     publishArtifact := false,
     publish := {},
     publishLocal := {}
-  ).aggregate(scalaz70, scalaz71, scalacheck110, scalacheck111)
-
-  lazy val scalaz70 = Project("scalaz70", file("scalaz70")).settings(
-    baseSettings(play2scalazFile): _*
-  ).settings(
-    name := "play2scalaz70",
-    description := scalazDescription,
-    libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-core" % scalaz70v
-    )
+  ).aggregate(
+    play22scalaz70,
+    play22scalaz71,
+    play22scalacheck110,
+    play22scalacheck111,
+    play23scalaz70,
+    play23scalaz71,
+    play23scalacheck110,
+    play23scalacheck111
   )
 
-  lazy val scalacheck110 = Project("scalacheck110", file("scalacheck110")).settings(
-    baseSettings(play2scalacheckFile): _*
+  lazy val play23scalaz70 = module(
+    "play23scalaz70", play2scalazFile :: play2scalaz70File :: Nil, play23v
   ).settings(
-    name := "play2scalacheck110",
+    description := scalazDescription,
+    libraryDependencies += scalaz70
+  )
+
+  lazy val play23scalacheck110 = module(
+    "play23scalacheck110", play2scalacheckFile :: Nil, play23v
+  ).settings(
+    description := scalacheckDescription,
+    libraryDependencies += scalacheck110
+  )
+
+  lazy val play23scalaz71 = module(
+    "play23scalaz71", play2scalazFile :: play2scalaz71File :: Nil, play23v
+  ).settings(
+    description := scalazDescription,
+    libraryDependencies += scalaz71
+  )
+
+  lazy val play23scalacheck111 = module(
+    "play23scalacheck111", play2scalacheckFile :: Nil, play23v
+  ).settings(
     description := scalacheckDescription,
     libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % "1.10.1"
-    )
-  )
-
-  lazy val scalaz71 = Project("scalaz71", file("scalaz71")).settings(
-    baseSettings(play2scalazFile): _*
-  ).settings(
-    name := "play2scalaz71",
-    description := scalazDescription,
-    libraryDependencies ++= Seq(
-      "org.scalaz" %% "scalaz-core" % scalaz71v
-    )
-  )
-
-  lazy val scalacheck111 = Project("scalacheck111", file("scalacheck111")).settings(
-    baseSettings(play2scalacheckFile): _*
-  ).settings(
-    name := "play2scalacheck111",
-    description := scalacheckDescription,
-    libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % "1.11.3",
+      scalacheck111,
       "org.scalaz" %% "scalaz-scalacheck-binding" % scalaz71v % "test"
     ),
     specLite := {
@@ -192,6 +202,38 @@ object build extends Build {
     sourceGenerators in Test += task{
       Seq(specLiteFile((sourceManaged in Test).value, specLite.value))
     }
-  ).dependsOn(scalaz71 % "test->test")
+  ).dependsOn(play23scalaz71 % "test->test")
+
+  lazy val play22scalaz70 = module(
+    "play22scalaz70", play2scalazFile :: play2scalaz70File :: Nil, play22
+  ).settings(
+    description := scalazDescription,
+    libraryDependencies += scalaz70
+  )
+
+  lazy val play22scalacheck110 = module(
+    "play22scalacheck110", play2scalacheckFile :: Nil, play22
+  ).settings(
+    name := "play22scalacheck110",
+    description := scalacheckDescription,
+    libraryDependencies += scalacheck110
+  )
+
+  lazy val play22scalaz71 = module(
+    "play22scalaz71", play2scalazFile :: play2scalaz71File :: Nil, play22
+  ).settings(
+    description := scalazDescription,
+    libraryDependencies += scalaz71
+  )
+
+  lazy val play22scalacheck111 = module(
+    "play22scalacheck111", play2scalacheckFile :: Nil, play22
+  ).settings(
+    description := scalacheckDescription,
+    libraryDependencies ++= Seq(
+      scalacheck111,
+      "org.scalaz" %% "scalaz-scalacheck-binding" % scalaz71v % "test"
+    )
+  )
 
 }
