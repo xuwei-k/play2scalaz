@@ -25,7 +25,7 @@ object build extends Build {
   val copySources = taskKey[Unit]("copy source files")
   val generatedSourceDir = "generated"
   val cleanSrc = taskKey[Unit]("clean generated sources")
-  val specLiteURL = s"https://raw.github.com/scalaz/scalaz/v${scalaz71v}/tests/src/test/scala/scalaz/SpecLite.scala"
+  val specLiteURL = s"https://raw.githubusercontent.com/scalaz/scalaz/v${scalaz71v}/tests/src/test/scala/scalaz/SpecLite.scala"
   val specLite = SettingKey[List[String]]("specLite")
   val checkGenerate = taskKey[Unit]("check generate")
 
