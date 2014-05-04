@@ -80,10 +80,6 @@ object build extends Build {
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
     watchSources ++= (((baseDirectory in LocalRootProject).value / "sources") ** ".scala").get,
-    scmInfo := Some(ScmInfo(
-      url("https://github.com/xuwei-k/play2scalaz"),
-      "scm:git:git@github.com:xuwei-k/play2scalaz.git"
-    )),
     pomExtra := (
     <url>https://github.com/xuwei-k/play2scalaz</url>
     <developers>
@@ -93,6 +89,11 @@ object build extends Build {
         <url>https://github.com/xuwei-k</url>
       </developer>
     </developers>
+    <scm>
+      <url>git@github.com:xuwei-k/play2scalaz.git</url>
+      <connection>scm:git:git@github.com:xuwei-k/play2scalaz.git</connection>
+      <tag>{if(isSnapshot.value) gitHash else { "v" + version.value }}</tag>
+    </scm>
     ),
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash else { "v" + version.value }
