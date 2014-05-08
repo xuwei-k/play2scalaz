@@ -11,14 +11,14 @@ object build extends Build {
   val play2scalaz71File = "Play2Scalaz71Base.scala"
   val play2scalacheckFile = "Play2Scalacheck.scala"
   val rootProjectId = "root"
-  val play22 = "2.2.2"
-  val play23 = "2.3-M1"
+  val root211ProjectId = "root211"
+  val play22 = "2.2.3"
+  val play23v = "2.3.0-RC1"
   val scalaz71v = "7.1.0-M6"
   val scalaz70 = "org.scalaz" %% "scalaz-core" % "7.0.6"
   val scalaz71 = "org.scalaz" %% "scalaz-core" % scalaz71v
   val scalacheck110 = "org.scalacheck" %% "scalacheck" % "1.10.1"
   val scalacheck111 = "org.scalacheck" %% "scalacheck" % "1.11.3"
-  val play23v = "2.3-M1"
   val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
   val scalazDescription = "play framework2 and scalaz typeclasses converter"
   val scalacheckDescription = "play framework2 scalacheck binding"
@@ -55,7 +55,7 @@ object build extends Build {
     val snapshotOrRelease = if(extracted get isSnapshot) "snapshots" else "releases"
     val readme = "README.md"
     val readmeFile = file(readme)
-    val modules = projects.map(p => extracted get (name in p)).filterNot(_ == rootProjectId)
+    val modules = projects.map(p => extracted get (name in p)).filterNot(Set(rootProjectId, root211ProjectId))
     val newReadme = Predef.augmentString(IO.read(readmeFile)).lines.map{ line =>
       val matchReleaseOrSnapshot = line.contains("SNAPSHOT") == v.contains("SNAPSHOT")
       def n = modules.find(line.contains).get
@@ -75,6 +75,7 @@ object build extends Build {
 
   val commonSettings = ReleasePlugin.releaseSettings ++ Sonatype.sonatypeSettings ++ Seq(
     scalaVersion := "2.10.4",
+    crossScalaVersions := scalaVersion.value :: Nil,
     organization := "com.github.xuwei-k",
     resolvers += "typesafe" at "http://typesafe.artifactoryonline.com/typesafe/releases",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
@@ -98,12 +99,18 @@ object build extends Build {
     scalacOptions in (Compile, doc) ++= {
       val tag = if(isSnapshot.value) gitHash else { "v" + version.value }
       Seq(
-        "-sourcepath", (baseDirectory in LocalProject(rootProjectId)).value.getAbsolutePath,
+        "-sourcepath", (baseDirectory in LocalRootProject).value.getAbsolutePath,
         "-doc-source-url", s"https://github.com/xuwei-k/play2scalaz/tree/${tag}€{FILE_PATH}.scala"
       )
     },
     logBuffered in Test := false,
     scalacOptions ++= Seq("-language:_", "-deprecation", "-unchecked", "-Xlint"),
+    scalacOptions ++= (
+      if(scalaVersion.value.startsWith("2.11"))
+        Seq("-Xsource:2.10", "-Ywarn-unused", "-Ywarn-unused-import")
+      else
+        Nil
+    ),
     ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
@@ -163,6 +170,20 @@ object build extends Build {
     play23scalaz71,
     play23scalacheck110,
     play23scalacheck111
+  )
+
+  lazy val root211 = Project(root211ProjectId, file("root211")).settings(
+    commonSettings: _*
+  ).settings(
+    publishArtifact := false,
+    publish := {},
+    publishLocal := {},
+    scalaVersion := "2.11.0"
+  ).aggregate(
+    play23scalaz70,
+//    play23scalaz71, TODO
+    play23scalacheck110
+//    play23scalacheck111 TODO
   )
 
   lazy val play23scalaz70 = module(
