@@ -14,7 +14,7 @@ object build extends Build {
   val root211ProjectId = "root211"
   val play22 = "2.2.3"
   val play23v = "2.3.0-RC1"
-  val scalaz71v = "7.1.0-M6"
+  val scalaz71v = "7.1.0-M7"
   val scalaz70 = "org.scalaz" %% "scalaz-core" % "7.0.6"
   val scalaz71 = "org.scalaz" %% "scalaz-core" % scalaz71v
   val scalacheck110 = "org.scalacheck" %% "scalacheck" % "1.10.1"
@@ -182,9 +182,9 @@ object build extends Build {
     scalaVersion := "2.11.0"
   ).aggregate(
     play23scalaz70,
-//    play23scalaz71, TODO
-    play23scalacheck110
-//    play23scalacheck111 TODO
+    play23scalaz71,
+    play23scalacheck110,
+    play23scalacheck111
   )
 
   lazy val play23scalaz70 = module(
