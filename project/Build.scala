@@ -189,7 +189,7 @@ object build extends Build {
     publishArtifact := false,
     publish := {},
     publishLocal := {},
-    scalaVersion := "2.11.0"
+    scalaVersion := "2.11.1"
   ).aggregate(
     play23scalaz70,
     play23scalaz71,
