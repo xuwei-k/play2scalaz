@@ -11,14 +11,14 @@ trait Play2ScalazBase {
   implicit val invariantFunctorIso: TypeclassIso[PlayInvariantFunctor, InvariantFunctor] =
     new TypeclassIso[PlayInvariantFunctor, InvariantFunctor](
       new (PlayInvariantFunctor ~~~> InvariantFunctor){
-        def apply[M[_]](m: PlayInvariantFunctor[M]) =
+        def apply[M[_]](implicit m: PlayInvariantFunctor[M]) =
           new InvariantFunctor[M] {
             def xmap[A, B](ma: M[A], f: A => B, g: B => A) =
               m.inmap(ma, f, g)
           }
       },
       new (InvariantFunctor ~~~> PlayInvariantFunctor){
-        def apply[M[_]](m: InvariantFunctor[M]) =
+        def apply[M[_]](implicit m: InvariantFunctor[M]) =
           new PlayInvariantFunctor[M] {
             def inmap[A, B](ma: M[A], f: A => B, g: B => A) =
               m.xmap(ma, f, g)

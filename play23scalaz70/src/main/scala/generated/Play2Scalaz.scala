@@ -21,7 +21,7 @@ final case class TypeclassIso[F[_[_]], G[_[_]]](
 
 /** higher order function */
 abstract class ~~~>[F[_[_]], G[_[_]]] {
-  def apply[M[_]](fm: F[M]): G[M]
+  def apply[M[_]](implicit fm: F[M]): G[M]
 }
 
 object Play2Scalaz extends Play2ScalazBase {
@@ -45,14 +45,14 @@ object Play2Scalaz extends Play2ScalazBase {
   implicit val contravariantIso: TypeclassIso[PlayContravariant, Contravariant] =
     new TypeclassIso[PlayContravariant, Contravariant](
       new (PlayContravariant ~~~> Contravariant){
-        def apply[M[_]](m: PlayContravariant[M]) =
+        def apply[M[_]](implicit m: PlayContravariant[M]) =
           new Contravariant[M] {
             def contramap[A, B](ma: M[A])(f: B => A) =
               m.contramap(ma, f)
           }
       },
       new (Contravariant ~~~> PlayContravariant){
-        def apply[M[_]](m: Contravariant[M]) =
+        def apply[M[_]](implicit m: Contravariant[M]) =
           new PlayContravariant[M] {
             def contramap[A, B](ma: M[A], f: B => A) =
               m.contramap(ma)(f)
@@ -63,14 +63,14 @@ object Play2Scalaz extends Play2ScalazBase {
   implicit val functorIso: TypeclassIso[PlayFunctor, Functor] =
     new TypeclassIso[PlayFunctor, Functor](
       new (PlayFunctor ~~~> Functor){
-        def apply[M[_]](m: PlayFunctor[M]) =
+        def apply[M[_]](implicit m: PlayFunctor[M]) =
           new Functor[M] {
             override def map[A, B](ma: M[A])(f: A => B) =
               m.fmap(ma, f)
           }
       },
       new (Functor ~~~> PlayFunctor){
-        def apply[M[_]](m: Functor[M]) =
+        def apply[M[_]](implicit m: Functor[M]) =
           new PlayFunctor[M] {
             override def fmap[A, B](ma: M[A], f: A => B) =
               m.map(ma)(f)
@@ -81,7 +81,7 @@ object Play2Scalaz extends Play2ScalazBase {
   implicit val applicativeIso: TypeclassIso[PlayApplicative, Applicative] =
     new TypeclassIso[PlayApplicative, Applicative](
       new (PlayApplicative ~~~> Applicative){
-        def apply[M[_]](m: PlayApplicative[M]) =
+        def apply[M[_]](implicit m: PlayApplicative[M]) =
           new Applicative[M] {
             def point[A](a: => A) =
               m.pure(a)
@@ -92,7 +92,7 @@ object Play2Scalaz extends Play2ScalazBase {
           }
       },
       new (Applicative ~~~> PlayApplicative){
-        def apply[M[_]](m: Applicative[M]) =
+        def apply[M[_]](implicit m: Applicative[M]) =
           new PlayApplicative[M] {
             def map[A, B](ma: M[A], f: A => B) =
               m.map(ma)(f)
@@ -107,7 +107,7 @@ object Play2Scalaz extends Play2ScalazBase {
   implicit val alternativeIso: TypeclassIso[PlayAlternative, Alternative] =
     new TypeclassIso[PlayAlternative, Alternative](
       new (PlayAlternative ~~~> Alternative){
-        def apply[M[+_]](m: PlayAlternative[M]) =
+        def apply[M[+_]](implicit m: PlayAlternative[M]) =
           new Alternative[M]{
             def point[A](a: => A) =
               m.app.pure(a)
@@ -122,7 +122,7 @@ object Play2Scalaz extends Play2ScalazBase {
           }
       },
       new (Alternative ~~~> PlayAlternative){
-        def apply[M[+_]](m: Alternative[M]) =
+        def apply[M[+_]](implicit m: Alternative[M]) =
           new PlayAlternative[M]{
             def app =
               applicativeIso.from(m)
