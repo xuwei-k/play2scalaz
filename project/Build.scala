@@ -13,7 +13,7 @@ object build extends Build {
   val rootProjectId = "root"
   val root211ProjectId = "root211"
   val play22 = "2.2.3"
-  val play23v = "2.3.1"
+  val play23v = "2.3.2"
   val scalaz71v = "7.1.0-RC1"
   val scalaz70 = "org.scalaz" %% "scalaz-core" % "7.0.6"
   val scalaz71 = "org.scalaz" %% "scalaz-core" % scalaz71v
@@ -189,7 +189,7 @@ object build extends Build {
     publishArtifact := false,
     publish := {},
     publishLocal := {},
-    scalaVersion := "2.11.1"
+    scalaVersion := "2.11.2"
   ).aggregate(
     play23scalaz70,
     play23scalaz71,
