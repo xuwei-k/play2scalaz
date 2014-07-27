@@ -14,11 +14,11 @@ object build extends Build {
   val root211ProjectId = "root211"
   val play22 = "2.2.3"
   val play23v = "2.3.2"
-  val scalaz71v = "7.1.0-RC1"
+  val scalaz71v = "7.1.0-RC2"
   val scalaz70 = "org.scalaz" %% "scalaz-core" % "7.0.6"
   val scalaz71 = "org.scalaz" %% "scalaz-core" % scalaz71v
   val scalacheck110 = "org.scalacheck" %% "scalacheck" % "1.10.1"
-  val scalacheck111 = "org.scalacheck" %% "scalacheck" % "1.11.3"
+  val scalacheck111 = "org.scalacheck" %% "scalacheck" % "1.11.4"
   val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
   val scalazDescription = "play framework2 and scalaz typeclasses converter"
   val scalacheckDescription = "play framework2 scalacheck binding"
