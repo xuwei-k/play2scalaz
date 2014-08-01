@@ -3,6 +3,7 @@ import xerial.sbt.Sonatype
 import sbtrelease._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
+import sbtbuildinfo.Plugin._
 
 object build extends Build {
 
@@ -20,14 +21,14 @@ object build extends Build {
   val scalacheck110 = "org.scalacheck" %% "scalacheck" % "1.10.1"
   val scalacheck111 = "org.scalacheck" %% "scalacheck" % "1.11.4"
   val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
-  val scalazDescription = "play framework2 and scalaz typeclasses converter"
-  val scalacheckDescription = "play framework2 scalacheck binding"
   val copySources = taskKey[Unit]("copy source files")
   val generatedSourceDir = "generated"
   val cleanSrc = taskKey[Unit]("clean generated sources")
   val specLiteURL = s"https://raw.githubusercontent.com/scalaz/scalaz/v${scalaz71v}/tests/src/test/scala/scalaz/SpecLite.scala"
   val specLite = SettingKey[List[String]]("specLite")
   val checkGenerate = taskKey[Unit]("check generate")
+
+  private[this] val playVersion = SettingKey[String]("playVersion")
 
   def gitHash: String = scala.util.Try(
     sys.process.Process("git rev-parse HEAD").lines_!.head
@@ -73,7 +74,7 @@ object build extends Build {
     state
   }
 
-  val commonSettings = ReleasePlugin.releaseSettings ++ Sonatype.sonatypeSettings ++ Seq(
+  val commonSettings = ReleasePlugin.releaseSettings ++ Sonatype.sonatypeSettings ++ buildInfoSettings ++ Seq(
     scalaVersion := "2.10.4",
     crossScalaVersions := scalaVersion.value :: Nil,
     organization := "com.github.xuwei-k",
@@ -133,6 +134,17 @@ object build extends Build {
       val diff = sys.process.Process("git diff").lines_!
       assert(diff.size == 0, diff.mkString("\n"))
     },
+    sourceGenerators in Compile <+= buildInfo,
+    buildInfoKeys := Seq[BuildInfoKey](
+      organization,
+      name,
+      version,
+      scalaVersion,
+      sbtVersion,
+      scalacOptions,
+      licenses,
+      playVersion
+    ),
     pomPostProcess := { node =>
       import scala.xml._
       import scala.xml.transform._
@@ -149,9 +161,28 @@ object build extends Build {
     }.toList
   )
 
-  def module(projectName: String, srcFiles: List[String], playVersion: String) =
+  private final case class ModuleType(
+    buildInfoPackage: String,
+    buildInfoObject: String,
+    description: String
+  )
+  private object ModuleType {
+    val Scalaz = ModuleType(
+      "play2scalaz",
+      "Play2ScalazBuildInfo",
+      "play framework2 and scalaz typeclasses converter"
+    )
+    val Scalacheck = ModuleType(
+      "play2scalacheck",
+      "Play2ScalacheckBuildInfo",
+      "play framework2 scalacheck binding"
+    )
+  }
+
+  def module(projectName: String, srcFiles: List[String], playV: String, moduleType: ModuleType) =
     Project(projectName, file(projectName)).settings(commonSettings: _*).settings(
-      libraryDependencies += "com.typesafe.play" %% "play-json" % playVersion,
+      libraryDependencies += "com.typesafe.play" %% "play-json" % playV,
+      playVersion := playV,
       copySources := {
         srcFiles.foreach{ srcFile =>
           IO.copyFile(
@@ -160,6 +191,9 @@ object build extends Build {
           )
         }
       },
+      buildInfoPackage := moduleType.buildInfoPackage,
+      buildInfoObject := moduleType.buildInfoObject,
+      description := moduleType.description,
       compile in Compile <<= (compile in Compile) dependsOn copySources,
       packageSrc in Compile <<= (packageSrc in Compile).dependsOn(compile in Compile),
       cleanSrc := IO.delete((scalaSource in Compile).value / generatedSourceDir),
@@ -198,30 +232,26 @@ object build extends Build {
   )
 
   lazy val play23scalaz70 = module(
-    "play23scalaz70", play2scalazFile :: play2scalaz70File :: Nil, play23v
+    "play23scalaz70", play2scalazFile :: play2scalaz70File :: Nil, play23v, ModuleType.Scalaz
   ).settings(
-    description := scalazDescription,
     libraryDependencies += scalaz70
   )
 
   lazy val play23scalacheck110 = module(
-    "play23scalacheck110", play2scalacheckFile :: Nil, play23v
+    "play23scalacheck110", play2scalacheckFile :: Nil, play23v, ModuleType.Scalacheck
   ).settings(
-    description := scalacheckDescription,
     libraryDependencies += scalacheck110
   )
 
   lazy val play23scalaz71 = module(
-    "play23scalaz71", play2scalazFile :: play2scalaz71File :: Nil, play23v
+    "play23scalaz71", play2scalazFile :: play2scalaz71File :: Nil, play23v, ModuleType.Scalaz
   ).settings(
-    description := scalazDescription,
     libraryDependencies += scalaz71
   )
 
   lazy val play23scalacheck111 = module(
-    "play23scalacheck111", play2scalacheckFile :: Nil, play23v
+    "play23scalacheck111", play2scalacheckFile :: Nil, play23v, ModuleType.Scalacheck
   ).settings(
-    description := scalacheckDescription,
     libraryDependencies ++= Seq(
       scalacheck111,
       "org.scalaz" %% "scalaz-scalacheck-binding" % scalaz71v % "test"
@@ -238,31 +268,27 @@ object build extends Build {
   ).dependsOn(play23scalaz71 % "test->test")
 
   lazy val play22scalaz70 = module(
-    "play22scalaz70", play2scalazFile :: play2scalaz70File :: Nil, play22
+    "play22scalaz70", play2scalazFile :: play2scalaz70File :: Nil, play22, ModuleType.Scalaz
   ).settings(
-    description := scalazDescription,
     libraryDependencies += scalaz70
   )
 
   lazy val play22scalacheck110 = module(
-    "play22scalacheck110", play2scalacheckFile :: Nil, play22
+    "play22scalacheck110", play2scalacheckFile :: Nil, play22, ModuleType.Scalacheck
   ).settings(
     name := "play22scalacheck110",
-    description := scalacheckDescription,
     libraryDependencies += scalacheck110
   )
 
   lazy val play22scalaz71 = module(
-    "play22scalaz71", play2scalazFile :: play2scalaz71File :: Nil, play22
+    "play22scalaz71", play2scalazFile :: play2scalaz71File :: Nil, play22, ModuleType.Scalaz
   ).settings(
-    description := scalazDescription,
     libraryDependencies += scalaz71
   )
 
   lazy val play22scalacheck111 = module(
-    "play22scalacheck111", play2scalacheckFile :: Nil, play22
+    "play22scalacheck111", play2scalacheckFile :: Nil, play22, ModuleType.Scalacheck
   ).settings(
-    description := scalacheckDescription,
     libraryDependencies ++= Seq(
       scalacheck111,
       "org.scalaz" %% "scalaz-scalacheck-binding" % scalaz71v % "test"
