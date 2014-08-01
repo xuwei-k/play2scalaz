@@ -8,33 +8,33 @@
 #### for scalaz 7.0.x
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "play22scalaz70" % "0.1.4"
+libraryDependencies += "com.github.xuwei-k" %% "play22scalaz70" % "0.1.5"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalaz70_2.10/0.1.4/play22scalaz70_2.10-0.1.4-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalaz70_2.10/0.1.5/play22scalaz70_2.10-0.1.5-javadoc.jar/!/index.html)
 
 #### for scalaz 7.1.x
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "play22scalaz71" % "0.1.4"
+libraryDependencies += "com.github.xuwei-k" %% "play22scalaz71" % "0.1.5"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalaz71_2.10/0.1.4/play22scalaz71_2.10-0.1.4-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalaz71_2.10/0.1.5/play22scalaz71_2.10-0.1.5-javadoc.jar/!/index.html)
 
 
 #### for scalacheck 1.10.1
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "play22scalacheck110" % "0.1.4"
+libraryDependencies += "com.github.xuwei-k" %% "play22scalacheck110" % "0.1.5"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalacheck110_2.10/0.1.4/play22scalacheck110_2.10-0.1.4-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalacheck110_2.10/0.1.5/play22scalacheck110_2.10-0.1.5-javadoc.jar/!/index.html)
 
 #### for scalacheck 1.11.4
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "play22scalacheck111" % "0.1.4"
+libraryDependencies += "com.github.xuwei-k" %% "play22scalacheck111" % "0.1.5"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalacheck111_2.10/0.1.4/play22scalacheck111_2.10-0.1.4-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalacheck111_2.10/0.1.5/play22scalacheck111_2.10-0.1.5-javadoc.jar/!/index.html)
 
