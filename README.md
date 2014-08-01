@@ -30,7 +30,7 @@ libraryDependencies += "com.github.xuwei-k" %% "play22scalacheck110" % "0.1.4"
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalacheck110_2.10/0.1.4/play22scalacheck110_2.10-0.1.4-javadoc.jar/!/index.html)
 
-#### for scalacheck 1.11.3
+#### for scalacheck 1.11.4
 
 ```scala
 libraryDependencies += "com.github.xuwei-k" %% "play22scalacheck111" % "0.1.4"
