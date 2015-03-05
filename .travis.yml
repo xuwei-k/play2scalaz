@@ -8,6 +8,6 @@ script:
   - sbt "$TEST_SCRIPT"
 
 env:
-  - TEST_SCRIPT=";++2.10.4; root/checkGenerate; root/test"
+  - TEST_SCRIPT=";++2.10.5; root/checkGenerate; root/test"
   - TEST_SCRIPT=";++2.11.6; root211/checkGenerate; root211/test"
 

@@ -75,7 +75,7 @@ object build extends Build {
   }
 
   val commonSettings = ReleasePlugin.releaseSettings ++ Sonatype.sonatypeSettings ++ buildInfoSettings ++ Seq(
-    scalaVersion := "2.10.4",
+    scalaVersion := "2.10.5",
     crossScalaVersions := scalaVersion.value :: Nil,
     organization := "com.github.xuwei-k",
     resolvers += "typesafe" at "http://typesafe.artifactoryonline.com/typesafe/releases",
