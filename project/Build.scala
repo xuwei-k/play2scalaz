@@ -111,7 +111,15 @@ object build extends Build {
       )
     },
     logBuffered in Test := false,
-    scalacOptions ++= Seq("-language:_", "-deprecation", "-unchecked", "-Xlint"),
+    scalacOptions ++= (
+      "-deprecation" ::
+      "-unchecked" ::
+      "-Xlint" ::
+      "-language:existentials" ::
+      "-language:higherKinds" ::
+      "-language:implicitConversions" ::
+      Nil
+    ),
     scalacOptions ++= (
       if(scalaVersion.value.startsWith("2.11"))
         "-Xsource:2.10" :: unusedWarnings
