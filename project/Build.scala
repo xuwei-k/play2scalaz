@@ -74,6 +74,12 @@ object build extends Build {
     state
   }
 
+  private[this] val unusedWarnings = (
+    "-Ywarn-unused" ::
+    "-Ywarn-unused-import" ::
+    Nil
+  )
+
   val commonSettings = ReleasePlugin.releaseSettings ++ Sonatype.sonatypeSettings ++ buildInfoSettings ++ Seq(
     scalaVersion := "2.10.5",
     crossScalaVersions := scalaVersion.value :: Nil,
@@ -108,7 +114,7 @@ object build extends Build {
     scalacOptions ++= Seq("-language:_", "-deprecation", "-unchecked", "-Xlint"),
     scalacOptions ++= (
       if(scalaVersion.value.startsWith("2.11"))
-        Seq("-Xsource:2.10", "-Ywarn-unused", "-Ywarn-unused-import")
+        "-Xsource:2.10" :: unusedWarnings
       else
         Nil
     ),
@@ -159,6 +165,8 @@ object build extends Build {
       case (Some(user), Some(pass)) =>
         Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", user, pass)
     }.toList
+  ) ++ Seq(Compile, Test).flatMap(c =>
+    scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
 
   private final case class ModuleType(
