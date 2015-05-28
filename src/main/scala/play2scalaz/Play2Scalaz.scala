@@ -10,6 +10,7 @@ import play.api.libs.iteratee.{Iteratee, Enumerator, Done}
 import play.api.libs.functional.{
   Functor => PlayFunctor,
   ContravariantFunctor => PlayContravariant,
+  InvariantFunctor => PlayInvariantFunctor,
   Applicative => PlayApplicative,
   Alternative => PlayAlternative,
   Monoid => PlayMonoid
@@ -24,7 +25,28 @@ abstract class ~~~>[F[_[_]], G[_[_]]] {
   def apply[M[_]](implicit fm: F[M]): G[M]
 }
 
-object Play2Scalaz extends Play2ScalazBase {
+object Play2Scalaz {
+
+  implicit val invariantFunctorIso: TypeclassIso[PlayInvariantFunctor, InvariantFunctor] =
+    new TypeclassIso[PlayInvariantFunctor, InvariantFunctor](
+      new (PlayInvariantFunctor ~~~> InvariantFunctor){
+        def apply[M[_]](implicit m: PlayInvariantFunctor[M]) =
+          new InvariantFunctor[M] {
+            def xmap[A, B](ma: M[A], f: A => B, g: B => A) =
+              m.inmap(ma, f, g)
+          }
+      },
+      new (InvariantFunctor ~~~> PlayInvariantFunctor){
+        def apply[M[_]](implicit m: InvariantFunctor[M]) =
+          new PlayInvariantFunctor[M] {
+            def inmap[A, B](ma: M[A], f: A => B, g: B => A) =
+              m.xmap(ma, f, g)
+          }
+      }
+    )
+
+  implicit val oFormatInvariant: InvariantFunctor[OFormat] =
+    invariantFunctorIso.to(play.api.libs.json.OFormat.invariantFunctorOFormat)
 
   implicit val monoidIso: PlayMonoid <~> Monoid =
     new IsoFunctorTemplate[PlayMonoid, Monoid]{
@@ -134,6 +156,9 @@ object Play2Scalaz extends Play2ScalazBase {
       }
     )
 
+  /**
+   * @note does not satisfy law
+   */
   implicit val jsResultInstance: Alternative[JsResult] =
     implicitly[PlayAlternative[JsResult]].toScalaz
 
@@ -198,6 +223,10 @@ object Play2Scalaz extends Play2ScalazBase {
         fa.writes _
     }
 
+  /**
+   * @note does not satisfy associative laws
+   * @see [[https://gist.github.com/xuwei-k/9a306226b04f9214f742]]
+   */
   implicit val jsObjectMonoid: Monoid[JsObject] =
     monoidIso.to(play.api.libs.json.Reads.JsObjectMonoid)
 
@@ -213,6 +242,9 @@ object Play2Scalaz extends Play2ScalazBase {
   implicit val oWritesContravariant: Contravariant[OWrites] =
     contravariantIso.to(play.api.libs.json.OWrites.contravariantfunctorOWrites)
 
+  /**
+   * @note does not satisfy laws
+   */
   implicit val readsAlternative: Alternative[Reads] =
     alternativeIso.to(play.api.libs.json.Reads.alternative)
 

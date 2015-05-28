@@ -2,14 +2,12 @@ language: scala
 
 sudo: false
 
+scala:
+  - 2.10.5
+  - 2.11.6
+
 jdk:
-  - oraclejdk7
   - oraclejdk8
 
 script:
-  - sbt "$TEST_SCRIPT"
-
-env:
-  - TEST_SCRIPT=";++2.10.5; root/checkGenerate; root/test"
-  - TEST_SCRIPT=";++2.11.6; root211/checkGenerate; root211/test"
-
+  - sbt ++${TRAVIS_SCALA_VERSION} compile test:compile test

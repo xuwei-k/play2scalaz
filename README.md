@@ -3,38 +3,14 @@
 - [Maven Central Repository Search](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.xuwei-k%22)
 - [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
 
-### latest stable version
-
-#### for scalaz 7.0.x
+### latest stable version (for play 2.4.x)
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "play22scalaz70" % "0.1.5"
+libraryDependencies += "com.github.xuwei-k" %% "play2scalaz" % "0.2.x"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalaz70_2.10/0.1.5/play22scalaz70_2.10-0.1.5-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play2scalaz_2.11/0.2.x/play2scalaz_2.11-0.2.x-javadoc.jar/!/index.html)
 
-#### for scalaz 7.1.x
+### play2.3.x or 2.2.x
 
-```scala
-libraryDependencies += "com.github.xuwei-k" %% "play22scalaz71" % "0.1.5"
-```
-
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalaz71_2.10/0.1.5/play22scalaz71_2.10-0.1.5-javadoc.jar/!/index.html)
-
-
-#### for scalacheck 1.10.1
-
-```scala
-libraryDependencies += "com.github.xuwei-k" %% "play22scalacheck110" % "0.1.5"
-```
-
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalacheck110_2.10/0.1.5/play22scalacheck110_2.10-0.1.5-javadoc.jar/!/index.html)
-
-#### for scalacheck 1.11.4
-
-```scala
-libraryDependencies += "com.github.xuwei-k" %% "play22scalacheck111" % "0.1.5"
-```
-
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play22scalacheck111_2.10/0.1.5/play22scalacheck111_2.10-0.1.5-javadoc.jar/!/index.html)
-
+see <https://github.com/xuwei-k/play2scalaz/tree/0.1.x>
