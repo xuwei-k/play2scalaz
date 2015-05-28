@@ -1,6 +1,7 @@
 import sbt._, Keys._
 import xerial.sbt.Sonatype
 import sbtrelease._
+import sbtrelease.ReleasePlugin.autoImport._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
 import sbtbuildinfo.Plugin._
@@ -80,7 +81,7 @@ object build extends Build {
     Nil
   )
 
-  val commonSettings = ReleasePlugin.releaseSettings ++ Sonatype.sonatypeSettings ++ buildInfoSettings ++ Seq(
+  val commonSettings = Sonatype.sonatypeSettings ++ buildInfoSettings ++ Seq(
     scalaVersion := "2.10.5",
     crossScalaVersions := scalaVersion.value :: Nil,
     organization := "com.github.xuwei-k",
@@ -126,7 +127,7 @@ object build extends Build {
       else
         Nil
     ),
-    ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+    releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
       runClean,
