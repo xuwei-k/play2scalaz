@@ -126,7 +126,6 @@ object build extends Build {
       else
         Nil
     ),
-    PgpKeys.publishSigned <<= PgpKeys.publishSigned dependsOn compile,
     ReleasePlugin.ReleaseKeys.releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
