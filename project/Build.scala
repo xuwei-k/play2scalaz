@@ -15,7 +15,7 @@ object build extends Build {
   val root211ProjectId = "root211"
   val play22 = "2.2.3"
   val play23v = "2.3.2"
-  val scalaz71v = "7.1.1"
+  val scalaz71v = "7.1.2"
   val scalaz70 = "org.scalaz" %% "scalaz-core" % "7.0.7"
   val scalaz71 = "org.scalaz" %% "scalaz-core" % scalaz71v
   val scalacheck110 = "org.scalacheck" %% "scalacheck" % "1.10.1"
