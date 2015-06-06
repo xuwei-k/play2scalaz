@@ -18,23 +18,19 @@ object PlayJsonGen {
     )
 
   private[this] def createJsObjectGen(valueGen: Gen[JsValue]): Gen[JsObject] =
-    Gen.choose(0, 4).flatMap(n =>
-      Gen.sequenceNList(
-        n,
-        Apply[Gen].tuple2(
-          Tag.unsubst(Gen[String @@ AlphaNum]), valueGen
-        )
-      ).map(JsObject(_))
-    )
+    Gen.listOfN(
+      4,
+      Apply[Gen].tuple2(
+        Tag.unsubst(Gen[String @@ AlphaNum]), valueGen
+      )
+    ).map(JsObject(_))
 
 
   val jsObjectGen1: Gen[JsValue] =
     createJsObjectGen(jsValuePrimitivesGen).map(identity)
 
   val jsArrayGen1: Gen[JsValue] =
-    Gen.choose(0, 4).flatMap(n =>
-      Gen.sequenceNList(n, jsValuePrimitivesGen).map(JsArray)
-    )
+    Gen.listOfN(4, jsValuePrimitivesGen).map(JsArray)
 
   implicit val jsValueGen: Gen[JsValue] =
     Gen.oneOf(
@@ -47,9 +43,7 @@ object PlayJsonGen {
     createJsObjectGen(jsValueGen)
 
   implicit val jsArrayGen: Gen[JsArray] =
-    Gen(Gen.choose(0, 4).flatMap(n =>
-      Gen.sequenceNList(n, jsValueGen).map(JsArray)
-    ))
+    Gen.listOfN(4, jsValueGen).map(JsArray)
 
   implicit val pathNodeGen: Gen[PathNode] =
     Gen.oneOf(
