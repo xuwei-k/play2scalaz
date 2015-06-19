@@ -152,7 +152,7 @@ object build extends Build {
   ).settings(
     name := "play2scalaz",
     libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.0",
-    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.1.2",
+    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.1.3",
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
     description := "play framework2 and scalaz typeclasses converters"
