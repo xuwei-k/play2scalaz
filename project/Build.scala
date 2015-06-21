@@ -67,7 +67,7 @@ object build extends Build {
     organization := "com.github.xuwei-k",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
-    scalapropsVersion := "0.1.8",
+    scalapropsVersion := "0.1.9",
     pomExtra := (
     <url>https://github.com/xuwei-k/play2scalaz</url>
     <developers>
