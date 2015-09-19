@@ -239,8 +239,26 @@ object Play2Scalaz {
   implicit val jsArrayEqual: Equal[JsArray] =
     Equal.equalA[JsArray]
 
-  implicit val oWritesContravariant: Contravariant[OWrites] =
-    contravariantIso.to(play.api.libs.json.OWrites.contravariantfunctorOWrites)
+  /**
+   * `FunctionalCanBuild` + `Contravariant` = `scalaz.Divide`
+   *
+   * @see [[https://github.com/playframework/playframework/blob/2.4.3/framework/src/play-json/src/main/scala/play/api/libs/json/Writes.scala#L63-L67]]
+   */
+  implicit val oWritesDivisible: Divisible[OWrites] =
+    new Divisible[OWrites] {
+      def contramap[A, B](r: OWrites[A])(f: B => A) =
+        OWrites.contravariantfunctorOWrites.contramap(r, f)
+
+      def divide[A, B, C](fa: OWrites[A], fb: OWrites[B])(f: C => (A, B)) =
+        OWrites[C]{ c =>
+          val x = f(c)
+          fa.writes(x._1) deepMerge fb.writes(x._2)
+        }
+
+      private[this] val emptyJsObject = JsObject(Nil)
+      private[this] val empty = OWrites[Any](_ => emptyJsObject)
+      def conquer[A] = empty
+    }
 
   /**
    * @note does not satisfy laws
