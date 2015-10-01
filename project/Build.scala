@@ -63,7 +63,7 @@ object build extends Build {
     scalapropsWithScalazlaws
   ) ++ Seq(
     scalaVersion := Scala211,
-    crossScalaVersions := "2.10.5" :: Scala211 :: Nil,
+    crossScalaVersions := "2.10.6" :: Scala211 :: Nil,
     organization := "com.github.xuwei-k",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
