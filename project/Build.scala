@@ -67,7 +67,7 @@ object build extends Build {
     organization := "com.github.xuwei-k",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
-    scalapropsVersion := "0.1.15",
+    scalapropsVersion := "0.1.16",
     pomExtra := (
     <url>https://github.com/xuwei-k/play2scalaz</url>
     <developers>
@@ -152,7 +152,7 @@ object build extends Build {
   ).settings(
     name := "play2scalaz",
     libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.3",
-    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.1.4",
+    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.1.5",
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
     description := "play framework2 and scalaz typeclasses converters"
