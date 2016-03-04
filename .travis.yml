@@ -10,4 +10,9 @@ jdk:
   - oraclejdk8
 
 script:
-  - sbt ++${TRAVIS_SCALA_VERSION} compile test:compile test
+  - sbt ++${TRAVIS_SCALA_VERSION} compile test:compile test $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
+
+env:
+  global:
+  - secure: YyN/5zCzZ9aheEVB6sNbw2W2SVrTXtXsmPHGh1mKyATLmleknvxnDSJndXzjVLTHypDCw++uJ9NwpfnQQJg4B5RCEZ0K7olTVHsqrO6xsfvRQiCra8FGB9UiJz+351Ooum4fntVEtCQSGkA3EKZgUQOi29eMqUBhW8ff+vYQ4I8=
+  - secure: BsNmyVb0HinZwCTUdHV4FeRkKqsIZjzcRM2974aqfuGGiajRH6lzpWp8tR3cPWxnMeZMLeHQi2K5oHqHvJbRubCVT0AOAVV5pogM6tLw8juGysehmdh/edo9J8DrSPcphvPSazOluT9WwIwm8EWhD1MtLAKbplE0rk/0LPYeJrE=

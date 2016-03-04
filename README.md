@@ -11,6 +11,16 @@ libraryDependencies += "com.github.xuwei-k" %% "play2scalaz" % "0.3.0"
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play2scalaz_2.11/0.3.0/play2scalaz_2.11-0.3.0-javadoc.jar/!/index.html)
 
+### snapshot version
+
+```scala
+libraryDependencies += "com.github.xuwei-k" %% "play2scalaz" % "0.3.1-SNAPSHOT"
+
+resolvers += Opts.resolver.sonatypeSnapshots
+```
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/play2scalaz_2.11/0.3.1-SNAPSHOT/play2scalaz_2.11-0.3.1-SNAPSHOT-javadoc.jar/!/index.html)
+
+
 ### play2.3.x or 2.2.x
 
 see <https://github.com/xuwei-k/play2scalaz/tree/0.1.x>
