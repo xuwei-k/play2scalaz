@@ -242,7 +242,7 @@ object Play2Scalaz {
   /**
    * `FunctionalCanBuild` + `Contravariant` = `scalaz.Divide`
    *
-   * @see [[https://github.com/playframework/playframework/blob/2.4.3/framework/src/play-json/src/main/scala/play/api/libs/json/Writes.scala#L63-L67]]
+   * @see [[https://github.com/playframework/playframework/blob/2.5.0/framework/src/play-json/src/main/scala/play/api/libs/json/Writes.scala#L66-L70]]
    */
   implicit val oWritesDivisible: Divisible[OWrites] =
     new Divisible[OWrites] {

@@ -2,15 +2,11 @@ language: scala
 
 sudo: false
 
-scala:
-  - 2.10.6
-  - 2.11.7
-
 jdk:
   - oraclejdk8
 
 script:
-  - sbt ++${TRAVIS_SCALA_VERSION} compile test:compile test $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
+  - sbt compile test:compile test $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
 
 env:
   global:

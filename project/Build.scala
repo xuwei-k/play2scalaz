@@ -64,7 +64,7 @@ object build extends Build {
   ) ++ Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     scalaVersion := Scala211,
-    crossScalaVersions := "2.10.6" :: Scala211 :: Nil,
+    crossScalaVersions := Scala211 :: Nil,
     organization := "com.github.xuwei-k",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
@@ -98,12 +98,9 @@ object build extends Build {
       "-language:existentials" ::
       "-language:higherKinds" ::
       "-language:implicitConversions" ::
+      "-Xsource:2.10" ::
       Nil
-    ),
-    scalacOptions ++= PartialFunction.condOpt(CrossVersion.partialVersion(scalaVersion.value)){
-      case Some((2, v)) if v >= 11 =>
-        "-Xsource:2.10" :: unusedWarnings
-    }.toList.flatten,
+    ) ::: unusedWarnings,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
@@ -151,7 +148,7 @@ object build extends Build {
     commonSettings
   ).settings(
     name := "play2scalaz",
-    libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.3",
+    libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.0",
     libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.1",
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
