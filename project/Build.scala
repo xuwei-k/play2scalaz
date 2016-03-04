@@ -4,7 +4,8 @@ import sbtrelease._
 import sbtrelease.ReleasePlugin.autoImport._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
-import sbtbuildinfo.Plugin._
+import sbtbuildinfo.BuildInfoPlugin
+import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import scalaprops.ScalapropsPlugin.autoImport._
 
 object build extends Build {
@@ -59,7 +60,6 @@ object build extends Build {
 
   val commonSettings = (
     Sonatype.sonatypeSettings ++
-    buildInfoSettings ++
     scalapropsWithScalazlaws
   ) ++ Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
@@ -120,7 +120,6 @@ object build extends Build {
       releaseStepAggregateCross(Sonatype.SonatypeKeys.sonatypeReleaseAll),
       pushChanges
     ),
-    sourceGenerators in Compile <+= buildInfo,
     buildInfoKeys := Seq[BuildInfoKey](
       organization,
       name,
@@ -157,6 +156,6 @@ object build extends Build {
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
     description := "play framework2 and scalaz typeclasses converters"
-  )
+  ).enablePlugins(BuildInfoPlugin)
 
 }
