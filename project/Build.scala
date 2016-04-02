@@ -148,7 +148,7 @@ object build extends Build {
     commonSettings
   ).settings(
     name := "play2scalaz",
-    libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.0",
+    libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.1",
     libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.2",
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
