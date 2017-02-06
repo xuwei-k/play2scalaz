@@ -1,5 +1,4 @@
 import sbt._, Keys._
-import xerial.sbt.Sonatype
 import sbtrelease._
 import sbtrelease.ReleasePlugin.autoImport._
 import ReleaseStateTransformations._
@@ -45,7 +44,7 @@ object build extends Build {
     IO.write(readmeFile, newReadme)
     val git = new Git(extracted get baseDirectory)
     git.add(readme) ! state.log
-    git.commit("update " + readme) ! state.log
+    git.commit(message = "update " + readme, sign = false) ! state.log
     "git diff HEAD^" ! state.log
     state
   }
@@ -59,7 +58,6 @@ object build extends Build {
   private[this] val Scala211 = "2.11.8"
 
   val commonSettings = (
-    Sonatype.sonatypeSettings ++
     scalapropsWithScalazlaws
   ) ++ Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
@@ -68,7 +66,7 @@ object build extends Build {
     organization := "com.github.xuwei-k",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
-    scalapropsVersion := "0.3.1",
+    scalapropsVersion := "0.4.0",
     pomExtra := (
     <url>https://github.com/xuwei-k/play2scalaz</url>
     <developers>
@@ -114,7 +112,7 @@ object build extends Build {
       setNextVersion,
       commitNextVersion,
       (updateReadme: ReleaseStep),
-      releaseStepAggregateCross(Sonatype.SonatypeKeys.sonatypeReleaseAll),
+      releaseStepCommand("sonatypeReleaseAll"),
       pushChanges
     ),
     buildInfoKeys := Seq[BuildInfoKey](
@@ -148,8 +146,8 @@ object build extends Build {
     commonSettings
   ).settings(
     name := "play2scalaz",
-    libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.1",
-    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.2",
+    libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.12",
+    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.8",
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
     description := "play framework2 and scalaz typeclasses converters"
