@@ -7,7 +7,7 @@ import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import scalaprops.ScalapropsPlugin.autoImport._
 
-object build extends Build {
+object build {
 
   private[this] val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
 
@@ -23,6 +23,9 @@ object build extends Build {
     enableCrossBuild = true
   )
 
+  val play2scalazName = "play2scalaz"
+  val modules = play2scalazName :: Nil
+
   val updateReadme = { state: State =>
     val extracted = Project.extract(state)
     val scalaV = extracted get scalaBinaryVersion
@@ -31,7 +34,6 @@ object build extends Build {
     val snapshotOrRelease = if(extracted get isSnapshot) "snapshots" else "releases"
     val readme = "README.md"
     val readmeFile = file(readme)
-    val modules = projects.map(p => extracted get (name in p))
     val newReadme = Predef.augmentString(IO.read(readmeFile)).lines.map{ line =>
       val matchReleaseOrSnapshot = line.contains("SNAPSHOT") == v.contains("SNAPSHOT")
       def n = modules.find(line.contains).get
@@ -141,16 +143,5 @@ object build extends Build {
   ) ++ Seq(Compile, Test).flatMap(c =>
     scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
   )
-
-  lazy val play2scalaz = Project("play2scalaz", file(".")).settings(
-    commonSettings
-  ).settings(
-    name := "play2scalaz",
-    libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.12",
-    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.8",
-    buildInfoPackage := "play2scalaz",
-    buildInfoObject := "Play2ScalazBuildInfo",
-    description := "play framework2 and scalaz typeclasses converters"
-  ).enablePlugins(BuildInfoPlugin)
 
 }
