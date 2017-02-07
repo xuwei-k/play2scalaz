@@ -1,6 +1,5 @@
 package play2scalaz
 
-import play.api.data.validation.ValidationError
 import play.api.libs.json._
 import play2scalaz.Play2Scalaz._
 import scalaprops.GenTags._
@@ -30,7 +29,7 @@ object PlayJsonGen {
     createJsObjectGen(jsValuePrimitivesGen).map(identity)
 
   val jsArrayGen1: Gen[JsValue] =
-    Gen.listOfN(4, jsValuePrimitivesGen).map(JsArray)
+    Gen.listOfN(4, jsValuePrimitivesGen).map(JsArray(_))
 
   implicit val jsValueGen: Gen[JsValue] =
     Gen.oneOf(
@@ -43,7 +42,7 @@ object PlayJsonGen {
     createJsObjectGen(jsValueGen)
 
   implicit val jsArrayGen: Gen[JsArray] =
-    Gen.listOfN(4, jsValueGen).map(JsArray)
+    Gen.listOfN(4, jsValueGen).map(JsArray(_))
 
   implicit val pathNodeGen: Gen[PathNode] =
     Gen.oneOf(
@@ -55,14 +54,14 @@ object PlayJsonGen {
   implicit val jsPathGen: Gen[JsPath] =
     Gen[List[PathNode]].map(JsPath.apply)
 
-  implicit val validationErrorGen: Gen[ValidationError] =
+  implicit val validationErrorGen: Gen[JsonValidationError] =
     Apply[Gen].apply2(
       Gen.alphaString,
       Gen[List[Int]]
-    )(ValidationError(_, _))
+    )(JsonValidationError(_, _))
 
   final def jsErrorGen[A]: Gen[JsResult[A]] =
-    Gen[List[(JsPath, List[ValidationError])]].map{ e =>
+    Gen[List[(JsPath, List[JsonValidationError])]].map{ e =>
       new JsError(e)
     }
 

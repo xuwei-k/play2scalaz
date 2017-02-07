@@ -1,12 +1,10 @@
 package play2scalaz
 
-import scala.concurrent.ExecutionContext
 import scalaz._
 import scalaz.Isomorphism._
 import play.api.libs.json.{
   JsResult, JsSuccess, JsError, JsObject, JsArray, JsValue, OFormat, Writes, OWrites, Reads
 }
-import play.api.libs.iteratee.{Iteratee, Enumerator, Done}
 import play.api.libs.functional.{
   Functor => PlayFunctor,
   ContravariantFunctor => PlayContravariant,
@@ -266,25 +264,4 @@ object Play2Scalaz {
   implicit val readsAlternative: Alternative[Reads] =
     alternativeIso.to(play.api.libs.json.Reads.alternative)
 
-  implicit def iterateeInstance[E](implicit e: ExecutionContext): Monad[({type λ[α] = Iteratee[E, α]})#λ] =
-    new Monad[({type λ[α] = Iteratee[E, α]})#λ] {
-      override def point[A](a: => A) =
-        Done(a)
-      override def bind[A, B](fa: Iteratee[E, A])(f: A => Iteratee[E, B]) =
-        fa flatMap f
-      override def map[A, B](fa: Iteratee[E, A])(f: A => B) =
-        fa map f
-    }
-
-  implicit def enumeratorInstance(implicit e: ExecutionContext): Monad[Enumerator] =
-    new Monad[Enumerator] {
-      override def point[A](a: => A) =
-        Enumerator(a)
-      override def bind[A, B](fa: Enumerator[A])(f: A => Enumerator[B]) =
-        fa flatMap f
-      override def map[A, B](fa: Enumerator[A])(f: A => B) =
-        fa map f
-    }
-
 }
-

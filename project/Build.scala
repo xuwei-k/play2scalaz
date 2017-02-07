@@ -64,7 +64,7 @@ object build {
   ) ++ Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     scalaVersion := Scala211,
-    crossScalaVersions := Scala211 :: Nil,
+    crossScalaVersions := Scala211 :: "2.12.1" :: Nil,
     organization := "com.github.xuwei-k",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
