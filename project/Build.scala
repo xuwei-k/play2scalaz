@@ -5,15 +5,20 @@ import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
-import scalaprops.ScalapropsPlugin.autoImport._
 
 object build {
 
   private[this] val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
 
-  private[this] def gitHash: String = scala.util.Try(
+  val tagName = Def.setting{
+    s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"
+  }
+  val tagOrHash = Def.setting{
+    if(isSnapshot.value) gitHash() else tagName.value
+  }
+
+  private[this] def gitHash(): String =
     sys.process.Process("git rev-parse HEAD").lines_!.head
-  ).getOrElse("master")
 
   private[this] def releaseStepAggregateCross[A](key: TaskKey[A]): ReleaseStep = ReleaseStep(
     action = { state =>
@@ -37,8 +42,10 @@ object build {
     val newReadme = Predef.augmentString(IO.read(readmeFile)).lines.map{ line =>
       val matchReleaseOrSnapshot = line.contains("SNAPSHOT") == v.contains("SNAPSHOT")
       def n = modules.find(line.contains).get
-      if(line.startsWith("libraryDependencies") && matchReleaseOrSnapshot){
+      if(line.startsWith("libraryDependencies") && matchReleaseOrSnapshot && line.contains(" %% ")){
         s"""libraryDependencies += "${org}" %% "${n}" % "$v""""
+      }else if(line.startsWith("libraryDependencies") && matchReleaseOrSnapshot && line.contains(" %%% ")){
+        s"""libraryDependencies += "${org}" %%% "${n}" % "$v""""
       }else if(line.contains(sonatypeURL) && matchReleaseOrSnapshot){
         s"- [API Documentation](${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.','/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}-javadoc.jar/!/index.html)"
       }else line
@@ -59,16 +66,13 @@ object build {
 
   private[this] val Scala211 = "2.11.8"
 
-  val commonSettings = (
-    scalapropsWithScalazlaws
-  ) ++ Seq(
+  val commonSettings = Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     scalaVersion := Scala211,
     crossScalaVersions := Scala211 :: "2.12.1" :: Nil,
     organization := "com.github.xuwei-k",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
-    scalapropsVersion := "0.4.0",
     pomExtra := (
     <url>https://github.com/xuwei-k/play2scalaz</url>
     <developers>
@@ -81,14 +85,13 @@ object build {
     <scm>
       <url>git@github.com:xuwei-k/play2scalaz.git</url>
       <connection>scm:git:git@github.com:xuwei-k/play2scalaz.git</connection>
-      <tag>{if(isSnapshot.value) gitHash else { "v" + version.value }}</tag>
+      <tag>{tagOrHash.value}</tag>
     </scm>
     ),
     scalacOptions in (Compile, doc) ++= {
-      val tag = if(isSnapshot.value) gitHash else { "v" + version.value }
       Seq(
         "-sourcepath", (baseDirectory in LocalRootProject).value.getAbsolutePath,
-        "-doc-source-url", s"https://github.com/xuwei-k/play2scalaz/tree/${tag}€{FILE_PATH}.scala"
+        "-doc-source-url", s"https://github.com/xuwei-k/play2scalaz/tree/${tagOrHash.value}€{FILE_PATH}.scala"
       )
     },
     scalacOptions ++= (
