@@ -6,10 +6,10 @@
 ### latest stable version (for play 2.5.x)
 
 ```scala
-libraryDependencies += "com.github.xuwei-k" %% "play2scalaz" % "0.4.0"
+libraryDependencies += "com.github.xuwei-k" %% "play2scalaz" % "0.5.0-M1"
 ```
 
-- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play2scalaz_2.11/0.4.0/play2scalaz_2.11-0.4.0-javadoc.jar/!/index.html)
+- [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play2scalaz_2.11/0.5.0-M1/play2scalaz_2.11-0.5.0-M1-javadoc.jar/!/index.html)
 
 ### snapshot version
 
