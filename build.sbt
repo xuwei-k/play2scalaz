@@ -9,8 +9,8 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."), CrossType.Pure).se
   scalapropsCoreSettings,
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalazlaws" % scalapropsVersion % "test",
-  libraryDependencies += "com.typesafe.play" %%% "play-json" % "2.6.0-M3",
-  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.2.8",
+  libraryDependencies += "com.typesafe.play" %%% "play-json" % "2.6.0-M5",
+  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.2.9",
   buildInfoPackage := "play2scalaz",
   buildInfoObject := "Play2ScalazBuildInfo",
   description := "play framework2 and scalaz typeclasses converters"
