@@ -64,7 +64,7 @@ object build {
     Nil
   )
 
-  private[this] val Scala211 = "2.11.8"
+  private[this] val Scala211 = "2.11.11"
 
   val commonSettings = Seq(
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
