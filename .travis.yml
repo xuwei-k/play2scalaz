@@ -9,6 +9,11 @@ scala:
 jdk:
   - oraclejdk8
 
+addons:
+  apt:
+    packages:
+    - oracle-java8-installer
+
 script:
   - sbt compile test:compile test $(if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
 
