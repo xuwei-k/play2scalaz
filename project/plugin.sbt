@@ -1,6 +1,6 @@
 scalacOptions ++= Seq("-deprecation", "-Xlint", "-unchecked", "-language:_")
 
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.17")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.18")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.1")
 
