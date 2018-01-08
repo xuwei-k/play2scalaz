@@ -64,7 +64,7 @@ object build {
     Nil
   )
 
-  private[this] val Scala211 = "2.11.11"
+  private[this] val Scala211 = "2.11.12"
 
   val commonSettings = Seq(
     publishTo := Some(
@@ -75,7 +75,7 @@ object build {
     ),
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     scalaVersion := Scala211,
-    crossScalaVersions := Scala211 :: "2.12.3" :: Nil,
+    crossScalaVersions := Scala211 :: "2.12.4" :: Nil,
     organization := "com.github.xuwei-k",
     licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
     commands += Command.command("updateReadme")(updateReadme),
