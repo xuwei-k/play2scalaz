@@ -15,7 +15,7 @@ addons:
     - oracle-java8-installer
 
 script:
-  - sbt "++${TRAVIS_SCALA_VERSION}" compile test:compile test $(if [[ "${TRAVIS_REPO_SLUG}" == "xuwei-k/play2scalaz" && "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
+  - sbt "++${TRAVIS_SCALA_VERSION}!" compile test:compile test $(if [[ "${TRAVIS_REPO_SLUG}" == "xuwei-k/play2scalaz" && "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
 
 env:
   global:

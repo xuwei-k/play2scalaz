@@ -17,7 +17,7 @@ object build {
   }
 
   private[this] def gitHash(): String =
-    sys.process.Process("git rev-parse HEAD").lines_!.head
+    sys.process.Process("git rev-parse HEAD").lineStream_!.head
 
   private[this] def releaseStepAggregateCross[A](key: TaskKey[A]): ReleaseStep = ReleaseStep(
     action = { state =>
@@ -53,7 +53,7 @@ object build {
     val git = new Git(extracted get baseDirectory)
     git.add(readme) ! state.log
     git.commit(message = "update " + readme, sign = false) ! state.log
-    "git diff HEAD^" ! state.log
+    sys.process.Process("git diff HEAD^") ! state.log
     state
   }
 
