@@ -67,6 +67,12 @@ object build {
   private[this] val Scala211 = "2.11.11"
 
   val commonSettings = Seq(
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    ),
     fullResolvers ~= {_.filterNot(_.name == "jcenter")},
     scalaVersion := Scala211,
     crossScalaVersions := Scala211 :: "2.12.3" :: Nil,
