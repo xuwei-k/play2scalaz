@@ -1,9 +1,9 @@
 import build._
-import org.scalajs.sbtplugin.cross.CrossProject
+import sbtcrossproject.{CrossProject, CrossType}
 
 val scalapropsVersion = "0.5.4"
 
-lazy val play2scalaz = CrossProject("play2scalaz", file("."), CrossType.Pure).settings(
+lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform).crossType(CrossType.Pure).settings(
   commonSettings,
   name := play2scalazName,
   scalapropsCoreSettings,
