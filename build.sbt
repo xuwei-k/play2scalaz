@@ -1,7 +1,7 @@
 import build._
 import sbtcrossproject.{CrossProject, CrossType}
 
-val scalapropsVersion = "0.5.4"
+val scalapropsVersion = "0.5.5"
 
 lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform).crossType(CrossType.Pure).settings(
   commonSettings,
@@ -10,7 +10,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalazlaws" % scalapropsVersion % "test",
   libraryDependencies += "com.typesafe.play" %%% "play-json" % "2.6.9",
-  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.2.22",
+  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.2.23",
   buildInfoPackage := "play2scalaz",
   buildInfoObject := "Play2ScalazBuildInfo",
   description := "play framework2 and scalaz typeclasses converters"
