@@ -70,7 +70,7 @@ val commonSettings = Def.settings(
   ),
   fullResolvers ~= {_.filterNot(_.name == "jcenter")},
   scalaVersion := Scala211,
-  crossScalaVersions := Scala211 :: "2.12.6" :: "2.13.0-M3" :: Nil,
+  crossScalaVersions := Scala211 :: "2.12.6" :: "2.13.0-M4" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
@@ -150,14 +150,24 @@ val commonSettings = Def.settings(
 )
 
 
+lazy val playJsonVersion = settingKey[String]("")
+
 lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform).crossType(CrossType.Pure).settings(
   commonSettings,
   name := play2scalazName,
   scalapropsCoreSettings,
+  playJsonVersion := {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, v)) if v >= 13 =>
+        "2.7.0-M1"
+      case _ =>
+        "2.6.9"
+    }
+  },
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalazlaws" % scalapropsVersion % "test",
-  libraryDependencies += "com.typesafe.play" %%% "play-json" % "2.6.9",
-  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.2.23",
+  libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
+  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.2.26",
   buildInfoPackage := "play2scalaz",
   buildInfoObject := "Play2ScalazBuildInfo",
   description := "play framework2 and scalaz typeclasses converters"
