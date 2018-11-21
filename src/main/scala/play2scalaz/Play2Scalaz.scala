@@ -116,7 +116,9 @@ object Play2Scalaz {
           new PlayApplicative[M] {
             def map[A, B](ma: M[A], f: A => B) =
               m.map(ma)(f)
-            def pure[A](a: A) =
+            override def pure[A](a: A) =
+              m.point(a)
+            def pure[A](a: => A) =
               m.point(a)
             def apply[A, B](f: M[A => B], ma: M[A]) =
               m.ap(ma)(f)

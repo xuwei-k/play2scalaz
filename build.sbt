@@ -70,7 +70,7 @@ val commonSettings = Def.settings(
   ),
   fullResolvers ~= {_.filterNot(_.name == "jcenter")},
   scalaVersion := Scala211,
-  crossScalaVersions := Scala211 :: "2.12.7" :: "2.13.0-M4" :: Nil,
+  crossScalaVersions := Scala211 :: "2.12.7" :: "2.13.0-M5" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
@@ -159,7 +159,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   playJsonVersion := {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, v)) if v >= 13 =>
-        "2.7.0-M1"
+        "2.7.0-RC1"
       case _ =>
         "2.6.9"
     }
