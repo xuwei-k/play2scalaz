@@ -15,11 +15,6 @@ matrix:
   - jdk: openjdk11
     scala: 2.12.7
 
-addons:
-  apt:
-    packages:
-    - oracle-java8-installer
-
 script:
   - sbt "++${TRAVIS_SCALA_VERSION}!" compile test:compile test $(if [[ "${TRAVIS_REPO_SLUG}" == "xuwei-k/play2scalaz" && "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" ]]; then echo "publish"; fi)
 
