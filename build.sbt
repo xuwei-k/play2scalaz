@@ -156,14 +156,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   commonSettings,
   name := play2scalazName,
   scalapropsCoreSettings,
-  playJsonVersion := {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, v)) if v >= 13 =>
-        "2.7.0-RC1"
-      case _ =>
-        "2.6.9"
-    }
-  },
+  playJsonVersion := "2.7.0",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalazlaws" % scalapropsVersion % "test",
   libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
