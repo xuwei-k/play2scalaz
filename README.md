@@ -6,7 +6,7 @@
 - [Maven Central Repository Search](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.xuwei-k%22)
 - [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
 
-### latest stable version (for play-json 2.6.x)
+### latest stable version (for play-json 2.7.x)
 
 ```scala
 libraryDependencies += "com.github.xuwei-k" %% "play2scalaz" % "0.6.0"
@@ -24,6 +24,6 @@ resolvers += Opts.resolver.sonatypeSnapshots
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/snapshots/archive/com/github/xuwei-k/play2scalaz_2.11/0.6.1-SNAPSHOT/play2scalaz_2.11-0.6.1-SNAPSHOT-javadoc.jar/!/index.html)
 
 
-### play2.5.x
+### for play 2.6.x
 
-see <https://github.com/xuwei-k/play2scalaz/tree/0.4.x>
+see <https://github.com/xuwei-k/play2scalaz/tree/0.5.x>
