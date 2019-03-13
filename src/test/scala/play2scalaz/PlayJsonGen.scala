@@ -2,8 +2,8 @@ package play2scalaz
 
 import play.api.libs.json._
 import play2scalaz.Play2Scalaz._
-import scalaprops.GenTags._
 import scalaprops._
+import scalaprops.ScalapropsScalaz._
 import scalaz._
 
 object PlayJsonGen {
@@ -13,14 +13,14 @@ object PlayJsonGen {
       Gen.value(JsNull),
       Gen[Boolean].map(JsBoolean),
       Gen[Long].map(n => JsNumber(BigDecimal(n))),
-      Tag.unsubst(Gen[String @@ AlphaNum]).map(JsString)
+      Gen.alphaNumString.map(JsString)
     )
 
   private[this] def createJsObjectGen(valueGen: Gen[JsValue]): Gen[JsObject] =
     Gen.listOfN(
       4,
       Apply[Gen].tuple2(
-        Tag.unsubst(Gen[String @@ AlphaNum]), valueGen
+        Gen.alphaNumString, valueGen
       )
     ).map(JsObject(_))
 

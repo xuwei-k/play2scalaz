@@ -3,7 +3,7 @@ import sbtrelease._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
 
-val scalapropsVersion = "0.5.5"
+val scalapropsVersion = "0.6.0"
 val Scala211 = "2.11.12"
 
 val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
@@ -158,7 +158,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   scalapropsCoreSettings,
   playJsonVersion := "2.7.1",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
-  libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalazlaws" % scalapropsVersion % "test",
+  libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
   libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
   libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.2.27",
   buildInfoPackage := "play2scalaz",
