@@ -70,7 +70,7 @@ val commonSettings = Def.settings(
   ),
   fullResolvers ~= {_.filterNot(_.name == "jcenter")},
   scalaVersion := Scala211,
-  crossScalaVersions := Scala211 :: "2.12.8" :: "2.13.0-M5" :: Nil,
+  crossScalaVersions := Scala211 :: "2.12.8" :: "2.13.0-RC1" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
@@ -102,7 +102,6 @@ val commonSettings = Def.settings(
     "-language:existentials" ::
     "-language:higherKinds" ::
     "-language:implicitConversions" ::
-    "-Xsource:2.10" ::
     Nil
   ) ::: unusedWarnings,
   releaseProcess := Seq[ReleaseStep](
@@ -156,7 +155,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   commonSettings,
   name := play2scalazName,
   scalapropsCoreSettings,
-  playJsonVersion := "2.7.2",
+  playJsonVersion := "2.7.3",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
   libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,

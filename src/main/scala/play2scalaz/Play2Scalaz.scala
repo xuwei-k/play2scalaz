@@ -129,7 +129,7 @@ object Play2Scalaz {
   implicit val alternativeIso: TypeclassIso[PlayAlternative, Alternative] =
     new TypeclassIso[PlayAlternative, Alternative](
       new (PlayAlternative ~~~> Alternative){
-        def apply[M[+_]](implicit m: PlayAlternative[M]) =
+        def apply[M[_]](implicit m: PlayAlternative[M]) =
           new Alternative[M]{
             def point[A](a: => A) =
               m.app.pure(a)
@@ -140,16 +140,16 @@ object Play2Scalaz {
             def plus[A](a: M[A], b: => M[A]) =
               m.|(a, b)
             def empty[A] =
-              m.empty
+              m.empty.asInstanceOf[M[A]]
           }
       },
       new (Alternative ~~~> PlayAlternative){
-        def apply[M[+_]](implicit m: Alternative[M]) =
+        def apply[M[_]](implicit m: Alternative[M]) =
           new PlayAlternative[M]{
             def app =
               applicativeIso.from(m)
             def |[A, B >: A](a: M[A], b: M[B]) =
-              m.plus[B](a, b)
+              m.plus[B](a.asInstanceOf[M[B]], b)
             val empty =
               m.empty
           }
