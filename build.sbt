@@ -3,7 +3,7 @@ import sbtrelease._
 import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
 
-val scalapropsVersion = "0.6.1"
+val scalapropsVersion = "0.6.2"
 val Scala211 = "2.11.12"
 
 val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
