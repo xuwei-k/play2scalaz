@@ -4,7 +4,7 @@ import ReleaseStateTransformations._
 import com.typesafe.sbt.pgp.PgpKeys
 
 val scalapropsVersion = "0.6.2"
-val Scala211 = "2.11.12"
+val Scala212 = "2.12.10"
 
 val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
 
@@ -69,8 +69,8 @@ val commonSettings = Def.settings(
       Opts.resolver.sonatypeStaging
   ),
   fullResolvers ~= {_.filterNot(_.name == "jcenter")},
-  scalaVersion := Scala211,
-  crossScalaVersions := Scala211 :: "2.12.10" :: "2.13.1" :: Nil,
+  scalaVersion := Scala212,
+  crossScalaVersions := Scala212 :: "2.13.1" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
