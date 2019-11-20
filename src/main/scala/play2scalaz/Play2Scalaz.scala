@@ -256,8 +256,7 @@ object Play2Scalaz {
         }
 
       private[this] val emptyJsObject = JsObject(Nil)
-      private[this] val empty = OWrites[Any](_ => emptyJsObject)
-      def conquer[A] = empty
+      def conquer[A] = OWrites[A](_ => emptyJsObject)
     }
 
   /**
