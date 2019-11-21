@@ -6,6 +6,8 @@ import com.typesafe.sbt.pgp.PgpKeys
 val scalapropsVersion = "0.6.2"
 val Scala212 = "2.12.10"
 
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
 
 val tagName = Def.setting{
