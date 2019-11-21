@@ -62,12 +62,7 @@ val unusedWarnings = (
 )
 
 val commonSettings = Def.settings(
-  publishTo := Some(
-    if (isSnapshot.value)
-      Opts.resolver.sonatypeSnapshots
-    else
-      Opts.resolver.sonatypeStaging
-  ),
+  publishTo := sonatypePublishToBundle.value,
   fullResolvers ~= {_.filterNot(_.name == "jcenter")},
   scalaVersion := Scala212,
   crossScalaVersions := Scala212 :: "2.13.1" :: Nil,
@@ -114,10 +109,10 @@ val commonSettings = Def.settings(
     (updateReadme: ReleaseStep),
     tagRelease,
     releaseStepAggregateCross(PgpKeys.publishSigned),
+    releaseStepCommand("sonatypeBundleRelease"),
     setNextVersion,
     commitNextVersion,
     (updateReadme: ReleaseStep),
-    releaseStepCommand("sonatypeReleaseAll"),
     pushChanges
   ),
   buildInfoKeys := Seq[BuildInfoKey](
