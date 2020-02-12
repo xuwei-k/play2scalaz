@@ -1,7 +1,6 @@
 import sbtcrossproject.{CrossProject, CrossType}
 import sbtrelease._
 import ReleaseStateTransformations._
-import com.typesafe.sbt.pgp.PgpKeys
 
 val scalapropsVersion = "0.6.3"
 val Scala212 = "2.12.10"
