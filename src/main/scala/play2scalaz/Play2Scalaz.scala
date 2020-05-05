@@ -126,11 +126,11 @@ object Play2Scalaz {
       }
     )
 
-  implicit val alternativeIso: TypeclassIso[PlayAlternative, Alternative] =
-    new TypeclassIso[PlayAlternative, Alternative](
-      new (PlayAlternative ~~~> Alternative){
+  implicit val alternativeIso: TypeclassIso[PlayAlternative, ApplicativePlus] =
+    new TypeclassIso[PlayAlternative, ApplicativePlus](
+      new (PlayAlternative ~~~> ApplicativePlus){
         def apply[M[_]](implicit m: PlayAlternative[M]) =
-          new Alternative[M]{
+          new ApplicativePlus[M]{
             def point[A](a: => A) =
               m.app.pure(a)
             def ap[A, B](fa: => M[A])(f: => M[A => B]) =
@@ -143,8 +143,8 @@ object Play2Scalaz {
               m.empty.asInstanceOf[M[A]]
           }
       },
-      new (Alternative ~~~> PlayAlternative){
-        def apply[M[_]](implicit m: Alternative[M]) =
+      new (ApplicativePlus ~~~> PlayAlternative){
+        def apply[M[_]](implicit m: ApplicativePlus[M]) =
           new PlayAlternative[M]{
             def app =
               applicativeIso.from(m)
@@ -159,7 +159,7 @@ object Play2Scalaz {
   /**
    * @note does not satisfy law
    */
-  implicit val jsResultInstance: Alternative[JsResult] =
+  implicit val jsResultInstance: ApplicativePlus[JsResult] =
     implicitly[PlayAlternative[JsResult]].toScalaz
 
 
@@ -184,7 +184,7 @@ object Play2Scalaz {
     def toPlay: PlayApplicative[F] = applicativeIso.from(self)
   }
 
-  implicit class ScalazAlternaiveOps[F[_]](val self: Alternative[F]) extends AnyVal{
+  implicit class ScalazAlternaiveOps[F[_]](val self: ApplicativePlus[F]) extends AnyVal{
     def toPlay: PlayAlternative[F] = alternativeIso.from(self)
   }
 
@@ -246,10 +246,10 @@ object Play2Scalaz {
    */
   implicit val oWritesDivisible: Divisible[OWrites] =
     new Divisible[OWrites] {
-      def contramap[A, B](r: OWrites[A])(f: B => A) =
+      override def contramap[A, B](r: OWrites[A])(f: B => A) =
         OWrites.contravariantfunctorOWrites.contramap(r, f)
 
-      def divide[A, B, C](fa: OWrites[A], fb: OWrites[B])(f: C => (A, B)) =
+      override def divide2[A, B, C](fa: => OWrites[A], fb: => OWrites[B])(f: C => (A, B)) =
         OWrites[C]{ c =>
           val x = f(c)
           fa.writes(x._1) deepMerge fb.writes(x._2)
@@ -262,7 +262,7 @@ object Play2Scalaz {
   /**
    * @note does not satisfy laws
    */
-  implicit val readsAlternative: Alternative[Reads] =
+  implicit val readsApplicativePlus: ApplicativePlus[Reads] =
     alternativeIso.to(play.api.libs.json.Reads.alternative)
 
 }

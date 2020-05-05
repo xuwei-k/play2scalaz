@@ -2,7 +2,7 @@ import sbtcrossproject.{CrossProject, CrossType}
 import sbtrelease._
 import ReleaseStateTransformations._
 
-val scalapropsVersion = "0.6.3"
+val scalapropsVersion = "0.8.0"
 val Scala212 = "2.12.11"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
@@ -155,7 +155,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
   libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
   libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
-  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.2.30",
+  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.3.0",
   buildInfoPackage := "play2scalaz",
   buildInfoObject := "Play2ScalazBuildInfo",
   description := "play framework2 and scalaz typeclasses converters"
