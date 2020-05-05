@@ -14,6 +14,12 @@ libraryDependencies += "com.github.xuwei-k" %% "play2scalaz" % "0.9.0"
 
 - [API Documentation](https://oss.sonatype.org/service/local/repositories/releases/archive/com/github/xuwei-k/play2scalaz_2.12/0.9.0/play2scalaz_2.12-0.9.0-javadoc.jar/!/index.html)
 
+
+### for scalaz 7.2.x
+
+see <https://github.com/xuwei-k/play2scalaz/tree/0.7.x>
+
+
 ### for play 2.7.x
 
 see <https://github.com/xuwei-k/play2scalaz/tree/0.6.x>
