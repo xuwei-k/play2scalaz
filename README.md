@@ -1,5 +1,5 @@
 # Play2Scalaz
-[![Build Status](https://secure.travis-ci.org/xuwei-k/play2scalaz.png?branch=master)](http://travis-ci.org/xuwei-k/play2scalaz)
+[![Build Status](https://travis-ci.com/xuwei-k/play2scalaz.png?branch=master)](http://travis-ci.com/xuwei-k/play2scalaz)
 [![Scala.js](https://www.scala-js.org/assets/badges/scalajs-0.6.14.svg)](https://www.scala-js.org)
 [![scaladoc](https://javadoc-badge.appspot.com/com.github.xuwei-k/play2scalaz_2.13.svg?label=scaladoc)](https://javadoc-badge.appspot.com/com.github.xuwei-k/play2scalaz_2.13/play2scalaz/index.html?javadocio=true)
 
