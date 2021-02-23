@@ -3,7 +3,7 @@ import sbtrelease._
 import ReleaseStateTransformations._
 
 val scalapropsVersion = "0.8.2"
-val Scala212 = "2.12.12"
+val Scala212 = "2.12.13"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
@@ -66,7 +66,7 @@ val commonSettings = Def.settings(
   publishTo := sonatypePublishToBundle.value,
   fullResolvers ~= {_.filterNot(_.name == "jcenter")},
   scalaVersion := Scala212,
-  crossScalaVersions := Scala212 :: "2.13.4" :: Nil,
+  crossScalaVersions := Scala212 :: "2.13.5" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
