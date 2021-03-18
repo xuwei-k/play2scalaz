@@ -10,7 +10,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
 
 val tagName = Def.setting{
-  s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"
+  s"v${if (releaseUseGlobalVersion.value) (ThisBuild / version).value else version.value}"
 }
 val tagOrHash = Def.setting{
   if(isSnapshot.value) gitHash() else tagName.value
@@ -22,7 +22,7 @@ def gitHash(): String =
 def releaseStepAggregateCross[A](key: TaskKey[A]): ReleaseStep = ReleaseStep(
   action = { state =>
     val extracted = Project extract state
-    extracted.runAggregated(key in Global in extracted.get(thisProjectRef), state)
+    extracted.runAggregated(extracted.get(thisProjectRef) / (Global / key), state)
   },
   enableCrossBuild = true
 )
@@ -85,9 +85,9 @@ val commonSettings = Def.settings(
     <tag>{tagOrHash.value}</tag>
   </scm>
   ),
-  scalacOptions in (Compile, doc) ++= {
+  (Compile / doc / scalacOptions) ++= {
     Seq(
-      "-sourcepath", (baseDirectory in LocalRootProject).value.getAbsolutePath,
+      "-sourcepath", (LocalRootProject / baseDirectory).value.getAbsolutePath,
       "-doc-source-url", s"https://github.com/xuwei-k/play2scalaz/tree/${tagOrHash.value}€{FILE_PATH}.scala"
     )
   },
@@ -140,7 +140,7 @@ val commonSettings = Def.settings(
       Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", user, pass)
   }.toList,
   Seq(Compile, Test).flatMap(c =>
-    scalacOptions in (c, console) ~= {_.filterNot(unusedWarnings.toSet)}
+    c / console / scalacOptions ~= {_.filterNot(unusedWarnings.toSet)}
   )
 )
 
@@ -161,7 +161,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   description := "play framework2 and scalaz typeclasses converters"
 ).enablePlugins(BuildInfoPlugin).jsSettings(
   scalacOptions += {
-    val a = (baseDirectory in LocalRootProject).value.toURI.toString
+    val a = (LocalRootProject / baseDirectory).value.toURI.toString
     val g = "https://raw.githubusercontent.com/xuwei-k/play2scalaz/" + tagOrHash.value
     s"-P:scalajs:mapSourceURI:$a->$g/"
   }
@@ -176,9 +176,9 @@ lazy val root = Project("root", file(".")).settings(
   PgpKeys.publishSigned := {},
   publishLocal := {},
   publish := {},
-  publishArtifact in Compile := false,
-  scalaSource in Compile := file("dummy"),
-  scalaSource in Test := file("dummy")
+  Compile / publishArtifact := false,
+  Compile / scalaSource := file("dummy"),
+  Test / scalaSource := file("dummy")
 ).aggregate(
   play2scalazJVM, play2scalazJS
 )
