@@ -2,7 +2,7 @@ import sbtcrossproject.{CrossProject, CrossType}
 import sbtrelease._
 import ReleaseStateTransformations._
 
-val scalapropsVersion = "0.8.2"
+val scalapropsVersion = "0.8.3"
 val Scala212 = "2.12.13"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
