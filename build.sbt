@@ -66,7 +66,7 @@ val commonSettings = Def.settings(
   publishTo := sonatypePublishToBundle.value,
   fullResolvers ~= {_.filterNot(_.name == "jcenter")},
   scalaVersion := Scala212,
-  crossScalaVersions := Scala212 :: "2.13.7" :: Nil,
+  crossScalaVersions := Scala212 :: "2.13.8" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
