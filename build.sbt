@@ -62,9 +62,8 @@ val updateReadme = {
     state
 }
 
-val unusedWarnings = (
-  "-Ywarn-unused" ::
-    Nil
+val unusedWarnings = Seq(
+  "-Ywarn-unused",
 )
 
 val commonSettings = Def.settings(
@@ -98,15 +97,15 @@ val commonSettings = Def.settings(
       s"https://github.com/xuwei-k/play2scalaz/tree/${tagOrHash.value}€{FILE_PATH}.scala"
     )
   },
-  scalacOptions ++= (
-    "-deprecation" ::
-      "-unchecked" ::
-      "-Xlint" ::
-      "-language:existentials" ::
-      "-language:higherKinds" ::
-      "-language:implicitConversions" ::
-      Nil
-  ) ::: unusedWarnings,
+  scalacOptions ++= Seq(
+    "-deprecation",
+    "-unchecked",
+    "-Xlint",
+    "-language:existentials",
+    "-language:higherKinds",
+    "-language:implicitConversions",
+  ),
+  scalacOptions ++= unusedWarnings,
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
