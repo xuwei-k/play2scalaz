@@ -70,7 +70,7 @@ val commonSettings = Def.settings(
   publishTo := sonatypePublishToBundle.value,
   fullResolvers ~= { _.filterNot(_.name == "jcenter") },
   scalaVersion := Scala212,
-  crossScalaVersions := Scala212 :: "2.13.10" :: Nil,
+  crossScalaVersions := Scala212 :: "2.13.10" :: "3.3.0-RC5" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
@@ -151,13 +151,13 @@ val commonSettings = Def.settings(
 
 lazy val playJsonVersion = settingKey[String]("")
 
-lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform)
+lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform, NativePlatform)
   .crossType(CrossType.Pure)
   .settings(
     commonSettings,
     name := play2scalazName,
     scalapropsCoreSettings,
-    playJsonVersion := "2.9.4",
+    playJsonVersion := "2.10.0-RC8",
     libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
     libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
     libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
@@ -167,11 +167,21 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
     description := "play framework2 and scalaz typeclasses converters"
   )
   .enablePlugins(BuildInfoPlugin)
+  .nativeSettings(
+    scalapropsNativeSettings
+  )
   .jsSettings(
     scalacOptions += {
       val a = (LocalRootProject / baseDirectory).value.toURI.toString
       val g = "https://raw.githubusercontent.com/xuwei-k/play2scalaz/" + tagOrHash.value
-      s"-P:scalajs:mapSourceURI:$a->$g/"
+      val key = {
+        if (scalaBinaryVersion.value == "3") {
+          "-scalajs-mapSourceURI"
+        } else {
+          "-P:scalajs:mapSourceURI"
+        }
+      }
+      s"${key}:$a->$g/"
     }
   )
 
