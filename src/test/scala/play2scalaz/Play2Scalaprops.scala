@@ -10,13 +10,13 @@ import play2scalaz.PlayJsonGen._
 object Play2Scalaprops extends Scalaprops {
 
   private[this] implicit def readsEqual[A: Equal]: Equal[Reads[A]] =
-    Equal.equal{(a, b) =>
+    Equal.equal { (a, b) =>
       val jsons = PlayJsonGen.jsValueGen.samples(listSize = 10, size = 10, seed = System.currentTimeMillis())
       jsons.forall(j => Equal[JsResult[A]].equal(a.reads(j), b.reads(j)))
     }
 
   private[this] implicit def owritesEqual[A: Equal: Gen]: Equal[OWrites[A]] =
-    Equal.equal{(a, b) =>
+    Equal.equal { (a, b) =>
       val jsons = Gen[A].samples(listSize = 10, size = 10, seed = System.currentTimeMillis())
       jsons.forall(j => Equal[JsObject].equal(a.writes(j), b.writes(j)))
     }
@@ -42,18 +42,22 @@ object Play2Scalaprops extends Scalaprops {
     scalazlaws.equal.all[JsArray]
   )
 
-  val testJsResult = Properties.list(
-    // scalazlaws.applicativePlus.all[JsResult], // does not satisfy laws
-    scalazlaws.applicative.all[JsResult],
-    scalazlaws.plus.all[JsResult],
-    scalazlaws.equal.all[JsResult[Int]]
-  ).andThenParam(Param.maxSize(5))
+  val testJsResult = Properties
+    .list(
+      // scalazlaws.applicativePlus.all[JsResult], // does not satisfy laws
+      scalazlaws.applicative.all[JsResult],
+      scalazlaws.plus.all[JsResult],
+      scalazlaws.equal.all[JsResult[Int]]
+    )
+    .andThenParam(Param.maxSize(5))
 
-  val testReads = Properties.list(
-    // does not satisfy plugEmpty laws
-    scalazlaws.applicative.all[Reads],
-    scalazlaws.plus.all[Reads]
-  ).andThenParam(Param.maxSize(5))
+  val testReads = Properties
+    .list(
+      // does not satisfy plugEmpty laws
+      scalazlaws.applicative.all[Reads],
+      scalazlaws.plus.all[Reads]
+    )
+    .andThenParam(Param.maxSize(5))
 
   val testOWrites =
     scalazlaws.contravariant.all[OWrites]

@@ -9,11 +9,11 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
 
-val tagName = Def.setting{
+val tagName = Def.setting {
   s"v${if (releaseUseGlobalVersion.value) (ThisBuild / version).value else version.value}"
 }
-val tagOrHash = Def.setting{
-  if(isSnapshot.value) gitHash() else tagName.value
+val tagOrHash = Def.setting {
+  if (isSnapshot.value) gitHash() else tagName.value
 }
 
 def gitHash(): String =
@@ -30,48 +30,53 @@ def releaseStepAggregateCross[A](key: TaskKey[A]): ReleaseStep = ReleaseStep(
 val play2scalazName = "play2scalaz"
 val modules = play2scalazName :: Nil
 
-val updateReadme = { state: State =>
-  val extracted = Project.extract(state)
-  val scalaV = extracted get scalaBinaryVersion
-  val v = extracted get version
-  val org =  extracted get organization
-  val snapshotOrRelease = if(extracted get isSnapshot) "snapshots" else "releases"
-  val readme = "README.md"
-  val readmeFile = file(readme)
-  val newReadme = Predef.augmentString(IO.read(readmeFile)).lines.map{ line =>
-    val matchReleaseOrSnapshot = line.contains("SNAPSHOT") == v.contains("SNAPSHOT")
-    def n = modules.find(line.contains).get
-    if(line.startsWith("libraryDependencies") && matchReleaseOrSnapshot && line.contains(" %% ")){
-      s"""libraryDependencies += "${org}" %% "${n}" % "$v""""
-    }else if(line.startsWith("libraryDependencies") && matchReleaseOrSnapshot && line.contains(" %%% ")){
-      s"""libraryDependencies += "${org}" %%% "${n}" % "$v""""
-    }else if(line.contains(sonatypeURL) && matchReleaseOrSnapshot){
-      s"- [API Documentation](${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.','/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}-javadoc.jar/!/index.html)"
-    }else line
-  }.mkString("", "\n", "\n")
-  IO.write(readmeFile, newReadme)
-  val git = new Git(extracted get baseDirectory)
-  git.add(readme) ! state.log
-  git.commit(message = "update " + readme, sign = false, signOff = false) ! state.log
-  sys.process.Process("git diff HEAD^") ! state.log
-  state
+val updateReadme = {
+  state: State =>
+    val extracted = Project.extract(state)
+    val scalaV = extracted get scalaBinaryVersion
+    val v = extracted get version
+    val org = extracted get organization
+    val snapshotOrRelease = if (extracted get isSnapshot) "snapshots" else "releases"
+    val readme = "README.md"
+    val readmeFile = file(readme)
+    val newReadme = Predef
+      .augmentString(IO.read(readmeFile))
+      .lines
+      .map { line =>
+        val matchReleaseOrSnapshot = line.contains("SNAPSHOT") == v.contains("SNAPSHOT")
+        def n = modules.find(line.contains).get
+        if (line.startsWith("libraryDependencies") && matchReleaseOrSnapshot && line.contains(" %% ")) {
+          s"""libraryDependencies += "${org}" %% "${n}" % "$v""""
+        } else if (line.startsWith("libraryDependencies") && matchReleaseOrSnapshot && line.contains(" %%% ")) {
+          s"""libraryDependencies += "${org}" %%% "${n}" % "$v""""
+        } else if (line.contains(sonatypeURL) && matchReleaseOrSnapshot) {
+          s"- [API Documentation](${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.', '/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}-javadoc.jar/!/index.html)"
+        } else line
+      }
+      .mkString("", "\n", "\n")
+    IO.write(readmeFile, newReadme)
+    val git = new Git(extracted get baseDirectory)
+    git.add(readme) ! state.log
+    git.commit(message = "update " + readme, sign = false, signOff = false) ! state.log
+    sys.process.Process("git diff HEAD^") ! state.log
+    state
 }
 
 val unusedWarnings = (
   "-Ywarn-unused" ::
-  Nil
+    Nil
 )
 
 val commonSettings = Def.settings(
   publishTo := sonatypePublishToBundle.value,
-  fullResolvers ~= {_.filterNot(_.name == "jcenter")},
+  fullResolvers ~= { _.filterNot(_.name == "jcenter") },
   scalaVersion := Scala212,
   crossScalaVersions := Scala212 :: "2.13.10" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
   pomExtra := (
-  <url>https://github.com/xuwei-k/play2scalaz</url>
+    <url>https://github.com/xuwei-k/play2scalaz</url>
   <developers>
     <developer>
       <id>xuwei-k</id>
@@ -87,18 +92,20 @@ val commonSettings = Def.settings(
   ),
   (Compile / doc / scalacOptions) ++= {
     Seq(
-      "-sourcepath", (LocalRootProject / baseDirectory).value.getAbsolutePath,
-      "-doc-source-url", s"https://github.com/xuwei-k/play2scalaz/tree/${tagOrHash.value}€{FILE_PATH}.scala"
+      "-sourcepath",
+      (LocalRootProject / baseDirectory).value.getAbsolutePath,
+      "-doc-source-url",
+      s"https://github.com/xuwei-k/play2scalaz/tree/${tagOrHash.value}€{FILE_PATH}.scala"
     )
   },
   scalacOptions ++= (
     "-deprecation" ::
-    "-unchecked" ::
-    "-Xlint" ::
-    "-language:existentials" ::
-    "-language:higherKinds" ::
-    "-language:implicitConversions" ::
-    Nil
+      "-unchecked" ::
+      "-Xlint" ::
+      "-language:existentials" ::
+      "-language:higherKinds" ::
+      "-language:implicitConversions" ::
+      Nil
   ) ::: unusedWarnings,
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
@@ -135,50 +142,55 @@ val commonSettings = Def.settings(
     val stripTestScope = stripIf { n => n.label == "dependency" && (n \ "scope").text == "test" }
     new RuleTransformer(stripTestScope).transform(node)(0)
   },
-  credentials ++= PartialFunction.condOpt(sys.env.get("SONATYPE_USER") -> sys.env.get("SONATYPE_PASSWORD")){
-    case (Some(user), Some(pass)) =>
+  credentials ++= PartialFunction
+    .condOpt(sys.env.get("SONATYPE_USER") -> sys.env.get("SONATYPE_PASSWORD")) { case (Some(user), Some(pass)) =>
       Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", user, pass)
-  }.toList,
-  Seq(Compile, Test).flatMap(c =>
-    c / console / scalacOptions ~= {_.filterNot(unusedWarnings.toSet)}
-  )
+    }
+    .toList,
+  Seq(Compile, Test).flatMap(c => c / console / scalacOptions ~= { _.filterNot(unusedWarnings.toSet) })
 )
-
 
 lazy val playJsonVersion = settingKey[String]("")
 
-lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform).crossType(CrossType.Pure).settings(
-  commonSettings,
-  name := play2scalazName,
-  scalapropsCoreSettings,
-  playJsonVersion := "2.9.4",
-  libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
-  libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
-  libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
-  libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.3.7",
-  buildInfoPackage := "play2scalaz",
-  buildInfoObject := "Play2ScalazBuildInfo",
-  description := "play framework2 and scalaz typeclasses converters"
-).enablePlugins(BuildInfoPlugin).jsSettings(
-  scalacOptions += {
-    val a = (LocalRootProject / baseDirectory).value.toURI.toString
-    val g = "https://raw.githubusercontent.com/xuwei-k/play2scalaz/" + tagOrHash.value
-    s"-P:scalajs:mapSourceURI:$a->$g/"
-  }
-)
+lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform)
+  .crossType(CrossType.Pure)
+  .settings(
+    commonSettings,
+    name := play2scalazName,
+    scalapropsCoreSettings,
+    playJsonVersion := "2.9.4",
+    libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
+    libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
+    libraryDependencies += "com.typesafe.play" %%% "play-json" % playJsonVersion.value,
+    libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.3.7",
+    buildInfoPackage := "play2scalaz",
+    buildInfoObject := "Play2ScalazBuildInfo",
+    description := "play framework2 and scalaz typeclasses converters"
+  )
+  .enablePlugins(BuildInfoPlugin)
+  .jsSettings(
+    scalacOptions += {
+      val a = (LocalRootProject / baseDirectory).value.toURI.toString
+      val g = "https://raw.githubusercontent.com/xuwei-k/play2scalaz/" + tagOrHash.value
+      s"-P:scalajs:mapSourceURI:$a->$g/"
+    }
+  )
 
 lazy val play2scalazJVM = play2scalaz.jvm
 lazy val play2scalazJS = play2scalaz.js
 
-lazy val root = Project("root", file(".")).settings(
-  commonSettings,
-  PgpKeys.publishLocalSigned := {},
-  PgpKeys.publishSigned := {},
-  publishLocal := {},
-  publish := {},
-  Compile / publishArtifact := false,
-  Compile / scalaSource := baseDirectory.value / "dummy",
-  Test / scalaSource := baseDirectory.value / "dummy",
-).aggregate(
-  play2scalazJVM, play2scalazJS
-)
+lazy val root = Project("root", file("."))
+  .settings(
+    commonSettings,
+    PgpKeys.publishLocalSigned := {},
+    PgpKeys.publishSigned := {},
+    publishLocal := {},
+    publish := {},
+    Compile / publishArtifact := false,
+    Compile / scalaSource := baseDirectory.value / "dummy",
+    Test / scalaSource := baseDirectory.value / "dummy",
+  )
+  .aggregate(
+    play2scalazJVM,
+    play2scalazJS
+  )
