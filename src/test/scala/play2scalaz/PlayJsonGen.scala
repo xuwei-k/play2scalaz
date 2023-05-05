@@ -17,13 +17,15 @@ object PlayJsonGen {
     )
 
   private[this] def createJsObjectGen(valueGen: Gen[JsValue]): Gen[JsObject] =
-    Gen.listOfN(
-      4,
-      Apply[Gen].tuple2(
-        Gen.alphaNumString, valueGen
+    Gen
+      .listOfN(
+        4,
+        Apply[Gen].tuple2(
+          Gen.alphaNumString,
+          valueGen
+        )
       )
-    ).map(JsObject(_))
-
+      .map(JsObject(_))
 
   val jsObjectGen1: Gen[JsValue] =
     createJsObjectGen(jsValuePrimitivesGen).map(identity)
@@ -61,7 +63,7 @@ object PlayJsonGen {
     )(JsonValidationError(_, _))
 
   final def jsErrorGen[A]: Gen[JsResult[A]] =
-    Gen[List[(JsPath, List[JsonValidationError])]].map{ e =>
+    Gen[List[(JsPath, List[JsonValidationError])]].map { e =>
       new JsError(e)
     }
 
