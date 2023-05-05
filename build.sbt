@@ -175,21 +175,11 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
     }
   )
 
-lazy val play2scalazJVM = play2scalaz.jvm
-lazy val play2scalazJS = play2scalaz.js
-
-lazy val root = Project("root", file("."))
-  .settings(
-    commonSettings,
-    PgpKeys.publishLocalSigned := {},
-    PgpKeys.publishSigned := {},
-    publishLocal := {},
-    publish := {},
-    Compile / publishArtifact := false,
-    Compile / scalaSource := baseDirectory.value / "dummy",
-    Test / scalaSource := baseDirectory.value / "dummy",
-  )
-  .aggregate(
-    play2scalazJVM,
-    play2scalazJS
-  )
+commonSettings
+PgpKeys.publishLocalSigned := {}
+PgpKeys.publishSigned := {}
+publishLocal := {}
+publish := {}
+Compile / publishArtifact := false
+Compile / scalaSource := baseDirectory.value / "dummy"
+Test / scalaSource := baseDirectory.value / "dummy"
