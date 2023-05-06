@@ -5,7 +5,7 @@
 - [Maven Central Repository Search](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.xuwei-k%22)
 - [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
 
-### latest stable version (for play-json 2.8.x)
+### latest stable version
 
 ```scala
 libraryDependencies += "com.github.xuwei-k" %% "play2scalaz" % "0.11.0"
