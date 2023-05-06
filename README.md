@@ -2,8 +2,8 @@
 [![Scala.js](https://www.scala-js.org/assets/badges/scalajs-0.6.14.svg)](https://www.scala-js.org)
 [![scaladoc](https://javadoc.io/badge2/com.github.xuwei-k/play2scalaz_2.13/javadoc.svg)](https://javadoc.io/doc/com.github.xuwei-k/play2scalaz_2.13)
 
-- [Maven Central Repository Search](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.xuwei-k%22)
-- [Maven Central](http://repo1.maven.org/maven2/com/github/xuwei-k/)
+- [Maven Central Repository Search](https://search.maven.org/search?q=g:com.github.xuwei-k%20play2scalaz)
+- [Maven Central](https://repo1.maven.org/maven2/com/github/xuwei-k/)
 
 ### latest stable version
 
