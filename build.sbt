@@ -3,7 +3,7 @@ import sbtrelease._
 import ReleaseStateTransformations._
 
 val scalapropsVersion = "0.9.1"
-val Scala212 = "2.12.19"
+val Scala212 = "2.12.20"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
