@@ -148,25 +148,25 @@ val commonSettings = Def.settings(
   Seq(Compile, Test).flatMap(c => c / console / scalacOptions ~= { _.filterNot(unusedWarnings.toSet) })
 )
 
-lazy val playJsonVersion = settingKey[String]("")
-
 lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform, NativePlatform)
   .crossType(CrossType.Pure)
   .settings(
     commonSettings,
     name := play2scalazName,
     scalapropsCoreSettings,
-    playJsonVersion := "3.0.4",
     libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
     libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
-    libraryDependencies += "org.playframework" %%% "play-json" % playJsonVersion.value,
     libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.3.8",
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
     description := "play framework2 and scalaz typeclasses converters"
   )
+  .platformsSettings(JVMPlatform, JSPlatform)(
+    libraryDependencies += "org.playframework" %%% "play-json" % "3.0.4",
+  )
   .enablePlugins(BuildInfoPlugin)
   .nativeSettings(
+    libraryDependencies += "org.playframework" %%% "play-json" % "3.1.0-M1",
     scalapropsNativeSettings
   )
   .jsSettings(
