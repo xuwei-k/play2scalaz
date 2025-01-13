@@ -18,6 +18,6 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
 
 addSbtPlugin("com.github.scalaprops" % "sbt-scalaprops" % "0.5.1")
 
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.3")
 
 fullResolvers ~= { _.filterNot(_.name == "jcenter") }
