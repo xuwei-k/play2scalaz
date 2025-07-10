@@ -166,7 +166,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   )
   .enablePlugins(BuildInfoPlugin)
   .nativeSettings(
-    libraryDependencies += "org.playframework" %%% "play-json" % "3.1.0-M1",
+    libraryDependencies += "org.playframework" %%% "play-json" % "3.1.0-M2",
     scalapropsNativeSettings
   )
   .jsSettings(
