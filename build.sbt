@@ -162,7 +162,7 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
     description := "play framework2 and scalaz typeclasses converters"
   )
   .platformsSettings(JVMPlatform, JSPlatform)(
-    libraryDependencies += "org.playframework" %%% "play-json" % "3.0.5",
+    libraryDependencies += "org.playframework" %%% "play-json" % "3.0.6",
   )
   .enablePlugins(BuildInfoPlugin)
   .nativeSettings(
