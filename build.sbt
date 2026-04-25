@@ -7,8 +7,6 @@ val Scala212 = "2.12.21"
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-val sonatypeURL = "https://oss.sonatype.org/service/local/repositories/"
-
 val tagName = Def.setting {
   s"v${if (releaseUseGlobalVersion.value) (ThisBuild / version).value else version.value}"
 }
@@ -48,8 +46,6 @@ val updateReadme = { state: State =>
         s"""libraryDependencies += "${org}" %% "${n}" % "$v""""
       } else if (line.startsWith("libraryDependencies") && matchReleaseOrSnapshot && line.contains(" %%% ")) {
         s"""libraryDependencies += "${org}" %%% "${n}" % "$v""""
-      } else if (line.contains(sonatypeURL) && matchReleaseOrSnapshot) {
-        s"- [API Documentation](${sonatypeURL}${snapshotOrRelease}/archive/${org.replace('.', '/')}/${n}_${scalaV}/${v}/${n}_${scalaV}-${v}-javadoc.jar/!/index.html)"
       } else line
     }
     .mkString("", "\n", "\n")
@@ -140,11 +136,6 @@ val commonSettings = Def.settings(
     val stripTestScope = stripIf { n => n.label == "dependency" && (n \ "scope").text == "test" }
     new RuleTransformer(stripTestScope).transform(node)(0)
   },
-  credentials ++= PartialFunction
-    .condOpt(sys.env.get("SONATYPE_USER") -> sys.env.get("SONATYPE_PASSWORD")) { case (Some(user), Some(pass)) =>
-      Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", user, pass)
-    }
-    .toList,
   Seq(Compile, Test).flatMap(c => c / console / scalacOptions ~= { _.filterNot(unusedWarnings.toSet) })
 )
 
