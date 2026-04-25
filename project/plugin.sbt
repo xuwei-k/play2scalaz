@@ -1,4 +1,4 @@
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_")
+scalacOptions ++= Seq("-deprecation", "-unchecked")
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.21.0")
 
