@@ -62,7 +62,7 @@ val unusedWarnings = Seq(
 )
 
 val commonSettings = Def.settings(
-  publishTo := sonatypePublishToBundle.value,
+  publishTo := (if (isSnapshot.value) None else localStaging.value),
   scalaVersion := Scala212,
   crossScalaVersions := Scala212 :: "2.13.18" :: "3.3.7" :: Nil,
   organization := "com.github.xuwei-k",
@@ -110,7 +110,7 @@ val commonSettings = Def.settings(
     (updateReadme: ReleaseStep),
     tagRelease,
     releaseStepAggregateCross(PgpKeys.publishSigned),
-    releaseStepCommand("sonatypeBundleRelease"),
+    releaseStepCommand("sonaRelease"),
     setNextVersion,
     commitNextVersion,
     (updateReadme: ReleaseStep),
