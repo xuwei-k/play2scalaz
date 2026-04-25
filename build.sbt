@@ -1,9 +1,10 @@
-import sbtcrossproject.{CrossProject, CrossType}
 import sbtrelease._
 import ReleaseStateTransformations._
 
 val scalapropsVersion = "0.10.1"
 val Scala212 = "2.12.21"
+
+val scalaVersions = Scala212 :: "2.13.18" :: "3.3.7" :: Nil
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
@@ -62,8 +63,6 @@ val unusedWarnings = Seq(
 
 val commonSettings = Def.settings(
   publishTo := (if (isSnapshot.value) None else localStaging.value),
-  scalaVersion := Scala212,
-  crossScalaVersions := Scala212 :: "2.13.18" :: "3.3.7" :: Nil,
   organization := "com.github.xuwei-k",
   licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
@@ -108,8 +107,8 @@ val commonSettings = Def.settings(
     commitReleaseVersion,
     (updateReadme: ReleaseStep),
     tagRelease,
-    releaseStepAggregateCross(PgpKeys.publishSigned),
-    releaseStepCommand("sonaRelease"),
+    releaseStepCommandAndRemaining("publishSigned"),
+    releaseStepCommandAndRemaining("sonaRelease"),
     setNextVersion,
     commitNextVersion,
     (updateReadme: ReleaseStep),
@@ -128,8 +127,9 @@ val commonSettings = Def.settings(
   Seq(Compile, Test).flatMap(c => c / console / scalacOptions ~= { _.filterNot(unusedWarnings.toSet) })
 )
 
-lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPlatform, NativePlatform)
-  .crossType(CrossType.Pure)
+lazy val play2scalaz = projectMatrix
+  .in(file("."))
+  .defaultAxes()
   .settings(
     commonSettings,
     name := play2scalazName,
@@ -150,27 +150,37 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
     buildInfoObject := "Play2ScalazBuildInfo",
     description := "play framework2 and scalaz typeclasses converters"
   )
-  .platformsSettings(JVMPlatform, JSPlatform)(
-    libraryDependencies += "org.playframework" %%% "play-json" % "3.0.6",
-  )
   .enablePlugins(BuildInfoPlugin)
-  .nativeSettings(
-    libraryDependencies += "org.playframework" %%% "play-json" % "3.1.0-M10",
-    scalapropsNativeSettings
+  .jvmPlatform(
+    scalaVersions,
+    Def.settings(
+      libraryDependencies += "org.playframework" %%% "play-json" % "3.0.6",
+    )
   )
-  .jsSettings(
-    scalacOptions += {
-      val a = (LocalRootProject / baseDirectory).value.toURI.toString
-      val g = "https://raw.githubusercontent.com/xuwei-k/play2scalaz/" + tagOrHash.value
-      val key = {
-        if (scalaBinaryVersion.value == "3") {
-          "-scalajs-mapSourceURI"
-        } else {
-          "-P:scalajs:mapSourceURI"
+  .nativePlatform(
+    scalaVersions,
+    Def.settings(
+      libraryDependencies += "org.playframework" %%% "play-json" % "3.1.0-M10",
+      scalapropsNativeSettings
+    )
+  )
+  .jsPlatform(
+    scalaVersions,
+    Def.settings(
+      libraryDependencies += "org.playframework" %%% "play-json" % "3.0.6",
+      scalacOptions += {
+        val a = (LocalRootProject / baseDirectory).value.toURI.toString
+        val g = "https://raw.githubusercontent.com/xuwei-k/play2scalaz/" + tagOrHash.value
+        val key = {
+          if (scalaBinaryVersion.value == "3") {
+            "-scalajs-mapSourceURI"
+          } else {
+            "-P:scalajs:mapSourceURI"
+          }
         }
-      }
-      s"${key}:$a->$g/"
-    }
+        s"${key}:$a->$g/"
+      },
+    )
   )
 
 commonSettings
@@ -181,3 +191,4 @@ publish := {}
 Compile / publishArtifact := false
 Compile / scalaSource := baseDirectory.value / "dummy"
 Test / scalaSource := baseDirectory.value / "dummy"
+autoScalaLibrary := false
