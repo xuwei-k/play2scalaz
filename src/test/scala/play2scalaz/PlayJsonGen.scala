@@ -13,7 +13,7 @@ object PlayJsonGen {
       Gen.value(JsNull),
       Gen[Boolean].map(JsBoolean),
       Gen[Long].map(n => JsNumber(BigDecimal(n))),
-      Gen.alphaNumString.map(JsString)
+      Gen.alphaNumString.map(JsString.apply)
     )
 
   private[this] def createJsObjectGen(valueGen: Gen[JsValue]): Gen[JsObject] =
@@ -48,9 +48,9 @@ object PlayJsonGen {
 
   implicit val pathNodeGen: Gen[PathNode] =
     Gen.oneOf(
-      Gen.alphaString.map(KeyPathNode),
-      Gen.alphaString.map(RecursiveSearch),
-      Gen[Int].map(IdxPathNode)
+      Gen.alphaString.map(KeyPathNode.apply),
+      Gen.alphaString.map(RecursiveSearch.apply),
+      Gen[Int].map(IdxPathNode.apply)
     )
 
   implicit val jsPathGen: Gen[JsPath] =

@@ -94,11 +94,25 @@ val commonSettings = Def.settings(
   scalacOptions ++= Seq(
     "-deprecation",
     "-unchecked",
-    "-Xlint",
     "-language:existentials",
-    "-language:higherKinds",
     "-language:implicitConversions",
   ),
+  scalacOptions ++= {
+    scalaBinaryVersion.value match {
+      case "2.12" =>
+        Seq(
+          "-Xlint",
+          "-Xsource:3",
+          "-language:higherKinds",
+        )
+      case "2.13" =>
+        Seq(
+          "-Xsource:3-cross",
+        )
+      case _ =>
+        Nil
+    }
+  },
   scalacOptions ++= unusedWarnings,
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
