@@ -116,15 +116,6 @@ val commonSettings = Def.settings(
     (updateReadme: ReleaseStep),
     pushChanges
   ),
-  buildInfoKeys := Seq[BuildInfoKey](
-    organization,
-    name,
-    version,
-    scalaVersion,
-    sbtVersion,
-    scalacOptions,
-    licenses
-  ),
   pomPostProcess := { node =>
     import scala.xml._
     import scala.xml.transform._
@@ -143,6 +134,15 @@ lazy val play2scalaz = CrossProject("play2scalaz", file("."))(JVMPlatform, JSPla
   .settings(
     commonSettings,
     name := play2scalazName,
+    buildInfoKeys := Seq[BuildInfoKey](
+      organization,
+      name,
+      version,
+      scalaVersion,
+      sbtVersion,
+      scalacOptions,
+      licenses
+    ),
     scalapropsCoreSettings,
     libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
     libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
