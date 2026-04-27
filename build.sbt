@@ -16,7 +16,7 @@ val tagOrHash = Def.setting {
 }
 
 def gitHash(): String =
-  sys.process.Process("git rev-parse HEAD").lineStream_!.head
+  sys.process.Process("git rev-parse HEAD").lazyLines_!.head
 
 def releaseStepAggregateCross[A](key: TaskKey[A]): ReleaseStep = ReleaseStep(
   action = { state =>
@@ -157,9 +157,9 @@ lazy val play2scalaz = projectMatrix
       licenses
     ),
     scalapropsCoreSettings,
-    libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
-    libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
-    libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.3.8",
+    libraryDependencies += "com.github.scalaprops" %% "scalaprops" % scalapropsVersion % "test",
+    libraryDependencies += "com.github.scalaprops" %% "scalaprops-scalaz" % scalapropsVersion % "test",
+    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.3.8",
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
     description := "play framework2 and scalaz typeclasses converters"
@@ -168,20 +168,20 @@ lazy val play2scalaz = projectMatrix
   .jvmPlatform(
     scalaVersions,
     Def.settings(
-      libraryDependencies += "org.playframework" %%% "play-json" % "3.0.6",
+      libraryDependencies += "org.playframework" %% "play-json" % "3.0.6",
     )
   )
   .nativePlatform(
     scalaVersions,
     Def.settings(
-      libraryDependencies += "org.playframework" %%% "play-json" % "3.1.0-M10",
+      libraryDependencies += "org.playframework" %% "play-json" % "3.1.0-M10",
       scalapropsNativeSettings
     )
   )
   .jsPlatform(
-    scalaVersions,
+    Nil,
     Def.settings(
-      libraryDependencies += "org.playframework" %%% "play-json" % "3.0.6",
+      libraryDependencies += "org.playframework" %% "play-json" % "3.0.6",
       scalacOptions += {
         val a = (LocalRootProject / baseDirectory).value.toURI.toString
         val g = "https://raw.githubusercontent.com/xuwei-k/play2scalaz/" + tagOrHash.value
@@ -197,12 +197,14 @@ lazy val play2scalaz = projectMatrix
     )
   )
 
-commonSettings
-PgpKeys.publishLocalSigned := {}
-PgpKeys.publishSigned := {}
-publishLocal := {}
-publish := {}
-Compile / publishArtifact := false
-Compile / scalaSource := baseDirectory.value / "dummy"
-Test / scalaSource := baseDirectory.value / "dummy"
-autoScalaLibrary := false
+val root = rootProject.autoAggregate.settings(
+  commonSettings,
+  PgpKeys.publishLocalSigned := {},
+  PgpKeys.publishSigned := {},
+  publishLocal := {},
+  publish := {},
+  Compile / publishArtifact := false,
+  Compile / scalaSource := baseDirectory.value / "dummy",
+  Test / scalaSource := baseDirectory.value / "dummy",
+  autoScalaLibrary := false,
+)
