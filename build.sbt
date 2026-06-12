@@ -159,7 +159,7 @@ lazy val play2scalaz = projectMatrix
     scalapropsCoreSettings,
     libraryDependencies += "com.github.scalaprops" %%% "scalaprops" % scalapropsVersion % "test",
     libraryDependencies += "com.github.scalaprops" %%% "scalaprops-scalaz" % scalapropsVersion % "test",
-    libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.3.8",
+    libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.3.9",
     buildInfoPackage := "play2scalaz",
     buildInfoObject := "Play2ScalazBuildInfo",
     description := "play framework2 and scalaz typeclasses converters"
