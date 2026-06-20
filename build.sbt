@@ -4,7 +4,7 @@ import ReleaseStateTransformations._
 val scalapropsVersion = "0.11.0"
 val Scala212 = "2.12.21"
 
-val scalaVersions = Scala212 :: "2.13.18" :: "3.3.8" :: Nil
+val scalaVersions = Scala212 :: "2.13.18" :: "3.8.4" :: Nil
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
