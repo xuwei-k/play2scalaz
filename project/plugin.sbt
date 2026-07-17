@@ -12,4 +12,4 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
 
 addSbtPlugin("com.github.scalaprops" % "sbt-scalaprops" % "0.5.3")
 
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.1")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.2")
