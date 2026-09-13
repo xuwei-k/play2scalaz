@@ -64,7 +64,7 @@ val unusedWarnings = Seq(
 val commonSettings = Def.settings(
   publishTo := (if (isSnapshot.value) None else localStaging.value),
   organization := "com.github.xuwei-k",
-  licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
+  licenses := Seq("MIT" -> uri("http://opensource.org/licenses/MIT")),
   commands += Command.command("updateReadme")(updateReadme),
   pomExtra := (
     <url>https://github.com/xuwei-k/play2scalaz</url>
