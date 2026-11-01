@@ -1,7 +1,7 @@
 import sbtrelease._
 import ReleaseStateTransformations._
 
-val scalapropsVersion = "0.11.1"
+val scalapropsVersion = "0.12.0"
 val Scala212 = "2.12.21"
 
 val scalaVersions = Scala212 :: "2.13.18" :: "3.3.9" :: Nil
