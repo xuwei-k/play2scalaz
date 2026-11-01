@@ -35,14 +35,14 @@ object Play2Scalaprops extends Scalaprops {
   // Json.obj("key" -> 2)
   // Json.obj("key" -> Json.obj("y" -> 3))
 
-  val testJsObject = scalazlaws.equal.all[JsObject]
+  property("jsObject") = scalazlaws.equal.all[JsObject]
 
-  val testJsArray = Properties.list(
+  property("jsArray") = Properties.list(
     scalazlaws.monoid.all[JsArray],
     scalazlaws.equal.all[JsArray]
   )
 
-  val testJsResult = Properties
+  property("jsResult") = Properties
     .list(
       // scalazlaws.applicativePlus.all[JsResult], // does not satisfy laws
       scalazlaws.applicative.all[JsResult],
@@ -51,7 +51,7 @@ object Play2Scalaprops extends Scalaprops {
     )
     .andThenParam(Param.maxSize(5))
 
-  val testReads = Properties
+  property("reads") = Properties
     .list(
       // does not satisfy plugEmpty laws
       scalazlaws.applicative.all[Reads],
@@ -59,10 +59,8 @@ object Play2Scalaprops extends Scalaprops {
     )
     .andThenParam(Param.maxSize(5))
 
-  val testOWrites =
-    scalazlaws.contravariant.all[OWrites]
+  property("oWrites") = scalazlaws.contravariant.all[OWrites]
 
-  val testOFormat =
-    scalazlaws.invariantFunctor.all[OFormat].andThenParam(Param.maxSize(5))
+  property("oFormat") = scalazlaws.invariantFunctor.all[OFormat].andThenParam(Param.maxSize(5))
 
 }
