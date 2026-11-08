@@ -178,7 +178,7 @@ lazy val play2scalaz = projectMatrix
     )
   )
   .jsPlatform(
-    Nil,
+    scalaVersions,
     Def.settings(
       libraryDependencies += "org.playframework" %% "play-json" % "3.0.6",
       scalacOptions += {
